@@ -1,0 +1,31 @@
+@model AccountTransactionsModel
+@{
+    ViewData["Title"] = $"{Model.Details.Name} (transactions)";
+}
+
+<div class="container">
+
+    <h2>@Model.Details.Name</h2>
+    <span class="little">@Model.Details.Number</span>
+
+    <div class="col-12">
+        <div>
+        <div class="row">
+            <div class="col header">Date</div>
+            <div class="col header">Caption</div>
+            <div class="col header">Amount</div>
+            <div class="col header">Balance</div>
+        </div>
+
+        @foreach(var acc in Model.Transactions)
+        {
+            <div class="row">
+                <div class="col">@acc.Date</div>
+                <div class="col">@acc.Tags.SingleOrDefault(t => t.TypeKey == "payee")?.Caption (@acc.Caption)</div>
+                <div class="col">@acc.Amount €</div>
+                <div class="col">@acc.Balance €</div>
+            </div>
+        }
+        </div>
+    </div>
+</div>

@@ -27,7 +27,11 @@ namespace web
         {
             services.AddTransient<ApiClient>(s => new ApiClient(s.GetService<ILogger<ApiClient>>(), s.GetService<IConfiguration>()));
 
-            services.AddControllersWithViews();
+            var mvcBuilder = services.AddControllersWithViews();
+
+#if DEBUG
+            mvcBuilder.AddRazorRuntimeCompilation();
+#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,28 +1,26 @@
 ﻿@model IEnumerable<dto.Model.AccountBase>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Accueil";
 }
 
+<div class="container">
+  <div class="row">
 
-<div class="text-center">
-    <h1 class="display-4">Accueil</h1>
-</div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <h2>Vos avoirs</h2>
+            <span>@($"{ViewBag.TotalBalance:0.00} €")</span>
+        </div>
 
-<div>
-    <h2>Résumé</h2>
-
-    <div>
-        <span>Vos avoirs : <span>@($"{ViewBag.TotalBalance:0.00} €")</span></span>
+        <div class="col-12 col-md-6 col-lg-4">
+            <h2>Comptes</h2>
+            <div>
+                <ul>
+                    @foreach(var acc in Model)
+                    {
+                        <li><a asp-controller="Accounts" asp-action="Transactions" asp-route-id="@acc.Id">@acc.Name</a> : @($"{acc.Balance:0.00} €")</li>
+                    }
+                </ul>
+            </div>
+        </div>
     </div>
-</div>
-
-<div>
-    <h2>Comptes</h2>
-
-    <ul>
-        @foreach(var acc in Model)
-        {
-            <li>@($"{acc.Name} : {acc.Balance:0.00} €")</li>
-        }
-    </ul>
 </div>
