@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using web.Services;
 
 namespace web
 {
@@ -23,6 +25,8 @@ namespace web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<ApiClient>(s => new ApiClient(s.GetService<ILogger<ApiClient>>(), s.GetService<IConfiguration>()));
+
             services.AddControllersWithViews();
         }
 

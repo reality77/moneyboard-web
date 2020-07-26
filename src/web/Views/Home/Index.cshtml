@@ -1,8 +1,28 @@
-﻿@{
+﻿@model IEnumerable<dto.Model.AccountBase>
+@{
     ViewData["Title"] = "Home Page";
 }
 
+
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Accueil</h1>
+</div>
+
+<div>
+    <h2>Résumé</h2>
+
+    <div>
+        <span>Vos avoirs : <span>@($"{ViewBag.TotalBalance:0.00} €")</span></span>
+    </div>
+</div>
+
+<div>
+    <h2>Comptes</h2>
+
+    <ul>
+        @foreach(var acc in Model)
+        {
+            <li>@($"{acc.Name} : {acc.Balance:0.00} €")</li>
+        }
+    </ul>
 </div>

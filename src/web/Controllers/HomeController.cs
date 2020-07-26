@@ -6,21 +6,28 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using web.Models;
+using web.Services;
 
 namespace web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApiClient _api;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApiClient api)
         {
             _logger = logger;
+            _api = api;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var accounts = await _api.GetAsync<IEnumerable<dto.Model.AccountBase>>("accounts");
+
+            ViewBag.TotalBalance = accounts.Sum(a => a.Balance);
+
+            return View(accounts);
         }
 
         public IActionResult Privacy()
