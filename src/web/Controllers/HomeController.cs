@@ -24,8 +24,10 @@ namespace web.Controllers
         public async Task<IActionResult> Index()
         {
             var accounts = await _api.GetAsync<IEnumerable<dto.Model.AccountBase>>("accounts");
+            var imports = await _api.GetAsync<IEnumerable<dto.Model.ImportedFile>>("import");
 
             ViewBag.TotalBalance = accounts.Sum(a => a.Balance);
+            ViewBag.Updated = imports.Max(i => i.ImportDate);
 
             return View(accounts);
         }

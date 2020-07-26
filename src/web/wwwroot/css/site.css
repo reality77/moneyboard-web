@@ -74,3 +74,19 @@ body {
   font-size: smaller;
   color: gray;
 }
+
+.table-header {
+  font-weight: bold;
+}
+
+.trx-balance {
+  font-weight: bold;
+}
+
+.trx-balance .positive {
+  color: green;
+}
+
+.trx-balance .negative {
+  color: darkred;
+}

@@ -20,6 +20,7 @@
                         <li><a asp-controller="Accounts" asp-action="Transactions" asp-route-id="@acc.Id">@acc.Name</a> : @($"{acc.Balance:0.00} €")</li>
                     }
                 </ul>
+                <span class="little">Mis à jour @($"{ViewBag.Updated:g}")</span>
             </div>
         </div>
     </div>
