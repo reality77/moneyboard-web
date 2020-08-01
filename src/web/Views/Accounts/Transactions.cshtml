@@ -1,3 +1,5 @@
+@using web.Utils
+
 @model AccountTransactionsModel
 @{
     ViewData["Title"] = $"{Model.Details.Name} (transactions)";
@@ -9,21 +11,32 @@
     <span class="little">@Model.Details.Number</span>
 
     <div class="col-12">
-        <div>
-        <div class="row">
-            <div class="col table-header">Date</div>
-            <div class="col table-header">Caption</div>
-            <div class="col table-header">Amount</div>
-            <div class="col table-header">Balance</div>
-        </div>
+        <div class="table100">
+            <div class="row">
+                <div class="cell table-header">Date</div>
+                <div class="cell table-header">Caption</div>
+                <div class="cell table-header">Amount</div>
+                <div class="cell table-header">Balance</div>
+            </div>
 
-        @foreach(var acc in Model.Transactions)
+        @foreach(var trx in Model.Transactions)
         {
             <div class="row">
-                <div class="col">@acc.Date</div>
-                <div class="col">@acc.Tags.SingleOrDefault(t => t.TypeKey == "payee")?.Caption (@acc.Caption)</div>
-                <div class="col">@acc.Amount €</div>
-                <div class="col"><span class="trx-balance @(acc.Balance > 0 ? "positive" : "negative")">@acc.Balance €</span></div>
+                <div class="cell">@trx.Date.ToString("dd MMM")</div>
+                <div class="cell">
+                    <div class="cell-transaction-caption">
+                        @{ var payee = @trx.Tags.SingleOrDefault(t => t.TypeKey == "payee"); }
+                        <div class="caption"><span alt="@payee?.Key">@payee?.Caption @(string.IsNullOrEmpty(trx.Caption) ? string.Empty : $"({trx.Caption})")</span></div>
+                        <div class="taglist">
+                            @foreach(var tag in trx.Tags.Where(t => t.TypeKey != "payee"))
+                            {
+                                <span alt="@tag.TypeKey : @tag.Key" class="tag">@(!string.IsNullOrWhiteSpace(tag.Caption) ? tag.Caption : tag.Key)</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="cell"><span class="trx-amount @(trx.Amount > 0 ? "positive" : null)">@trx.Amount.ToCurrencyString() @Model.Details.Currency.ToCurrencyString()</span></div>
+                <div class="cell"><span class="trx-balance @(trx.Balance <= 0 ? "negative" : null)">@trx.Balance.ToCurrencyString() @Model.Details.Currency.ToCurrencyString()</span></div>
             </div>
         }
         </div>

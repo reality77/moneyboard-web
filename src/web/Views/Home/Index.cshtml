@@ -14,12 +14,17 @@
         <div class="col-12 col-md-6 col-lg-4">
             <h2>Comptes</h2>
             <div>
-                <ul>
+                <div class="table100">
                     @foreach(var acc in Model)
                     {
-                        <li><a asp-controller="Accounts" asp-action="Transactions" asp-route-id="@acc.Id">@acc.Name</a> : @($"{acc.Balance:0.00} €")</li>
+                        <div class="row">
+                            <div class="cell">
+                                <a asp-controller="Accounts" asp-action="Transactions" asp-route-id="@acc.Id">@acc.Name</a>
+                            </div>
+                            <div class="cell">@($"{acc.Balance:0.00} €")</div>
+                        </div>
                     }
-                </ul>
+                </div>
                 <span class="little">Mis à jour @($"{ViewBag.Updated:g}")</span>
             </div>
         </div>

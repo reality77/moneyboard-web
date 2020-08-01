@@ -24,7 +24,7 @@ namespace web.Controllers
 
 
         [Route("{id}/transactions")]
-        public async Task<IActionResult> Transactions(int id, int pageId = 0, int itemsPerPage = 20)
+        public async Task<IActionResult> Transactions(int id, int pageId = 0, int itemsPerPage = 200)
         {
             var details = await _api.GetAsync<dto.Model.AccountDetails>($"accounts/{id}");
             var transactions = await _api.GetAsync<IEnumerable<dto.Model.TransactionWithBalance>>($"accounts/{id}/transactions?pageId={pageId}&itemsPerPage={itemsPerPage}");

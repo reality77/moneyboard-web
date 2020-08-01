@@ -80,13 +80,66 @@ body {
 }
 
 .trx-balance {
+  float: right;
   font-weight: bold;
 }
 
-.trx-balance .positive {
+.trx-amount {
+  float: right;
+}
+
+.positive {
   color: green;
 }
 
-.trx-balance .negative {
+.negative {
   color: darkred;
+}
+
+.table{
+  display: table;
+}
+
+.table100{
+  display: table;
+  width: 100%;
+}
+
+.row{
+  display: table-row;
+}
+
+.cell{
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.cell-transaction-caption {
+  display: flex;
+  width: 100%;
+}
+
+.cell-transaction-caption > .caption {
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.cell-transaction-caption > .taglist {
+  display: flex;
+  flex: 0 0 auto;
+  margin: auto 0 auto auto;
+}
+
+.cell-transaction-caption > .taglist > span {
+  display: flex;
+  flex: 0 0 auto;
+  margin-left: 0.1em;
+  margin-right: 0.1rem;
+}
+
+span.tag {
+  border: darkseagreen;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 0 2px 0 2px;
 }
