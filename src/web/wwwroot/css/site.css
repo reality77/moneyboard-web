@@ -96,7 +96,7 @@ body {
   color: darkred;
 }
 
-.table{
+.table {
   display: table;
 }
 
@@ -105,32 +105,32 @@ body {
   width: 100%;
 }
 
-.row{
+.table-row{
   display: table-row;
 }
 
-.cell{
+.table-cell{
   display: table-cell;
   vertical-align: middle;
 }
 
-.cell-transaction-caption {
+.table-cell-transaction-caption {
   display: flex;
   width: 100%;
 }
 
-.cell-transaction-caption > .caption {
+.table-cell-transaction-caption > .caption {
   display: flex;
   flex: 0 0 auto;
 }
 
-.cell-transaction-caption > .taglist {
+.table-cell-transaction-caption > .taglist {
   display: flex;
   flex: 0 0 auto;
   margin: auto 0 auto auto;
 }
 
-.cell-transaction-caption > .taglist > span {
+.table-cell-transaction-caption > .taglist > span {
   display: flex;
   flex: 0 0 auto;
   margin-left: 0.1em;

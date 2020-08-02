@@ -1,0 +1,48 @@
+@using web.Utils
+
+@model dto.Model.ImportedTransaction
+@{
+    ViewData["Title"] = $"Transaction {Model.Id}";
+}
+
+<h2>Transaction @Model.Caption</h2>
+<span class="little">@Model.Id</span>
+
+<form asp-controller="Transactions" asp-action="Update" asp-route-id="@Model.Id" method="post">
+    <div>
+        <label for="date">Date</label>
+        <input id="date" asp-for="Date" /> 
+    </div>
+    <div>
+        <label for="caption">Libellé</label>
+        <input id="caption" asp-for="Caption" /> 
+    </div>
+    <div>
+        <label for="comment">Commentaire</label>
+        <input id="comment" asp-for="Comment" /> 
+    </div>
+    <div>
+        <label for="amount">Montant</label>
+        <input id="amount" asp-for="Amount" /> 
+    </div>
+    <div>
+        <label>Import hash</label>
+        <span>@Model.ImportHash</span>
+    </div>
+    <div>
+        <label>Import caption</label>
+        <span>@Model.ImportCaption</span>
+    </div>
+    <div>
+        <label>Import comment</label>
+        <span>@Model.ImportComment</span>
+    </div>
+    <div>
+        <label>Import number</label>
+        <span>@Model.ImportNumber</span>
+    </div>
+    <div>
+        <label>Import file ID</label>
+        <span>@Model.ImportFileId</span>
+    </div>
+</form>

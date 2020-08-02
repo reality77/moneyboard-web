@@ -17,11 +17,11 @@
                 <div class="table100">
                     @foreach(var acc in Model)
                     {
-                        <div class="row">
-                            <div class="cell">
+                        <div class="table-row">
+                            <div class="table-cell">
                                 <a asp-controller="Accounts" asp-action="Transactions" asp-route-id="@acc.Id">@acc.Name</a>
                             </div>
-                            <div class="cell">@($"{acc.Balance:0.00} €")</div>
+                            <div class="table-cell">@($"{acc.Balance:0.00} €")</div>
                         </div>
                     }
                 </div>

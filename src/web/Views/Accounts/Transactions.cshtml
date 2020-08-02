@@ -5,38 +5,42 @@
     ViewData["Title"] = $"{Model.Details.Name} (transactions)";
 }
 
-<div class="container">
+<div class="row">
 
     <h2>@Model.Details.Name</h2>
     <span class="little">@Model.Details.Number</span>
 
     <div class="col-12">
         <div class="table100">
-            <div class="row">
-                <div class="cell table-header">Date</div>
-                <div class="cell table-header">Caption</div>
-                <div class="cell table-header">Amount</div>
-                <div class="cell table-header">Balance</div>
+            <div class="table-row">
+                <div class="table-cell table-header">Date</div>
+                <div class="table-cell table-header">Caption</div>
+                <div class="table-cell table-header">Amount</div>
+                <div class="table-cell table-header">Balance</div>
             </div>
 
         @foreach(var trx in Model.Transactions)
         {
-            <div class="row">
-                <div class="cell">@trx.Date.ToString("dd MMM")</div>
-                <div class="cell">
-                    <div class="cell-transaction-caption">
+            <div class="table-row">
+                <div class="table-cell">@trx.Date.ToString("dd MMM")</div>
+                <div class="table-cell">
+                    <div class="table-cell-transaction-caption">
                         @{ var payee = @trx.Tags.SingleOrDefault(t => t.TypeKey == "payee"); }
-                        <div class="caption"><span alt="@payee?.Key">@payee?.Caption @(string.IsNullOrEmpty(trx.Caption) ? string.Empty : $"({trx.Caption})")</span></div>
+                        <div class="caption">
+                            <span alt="@payee?.Key"><a asp-controller="Payees" asp-action="Details" asp-route-key="@payee?.Key">@payee?.Caption</a> @(string.IsNullOrEmpty(trx.Caption) ? string.Empty : $"({trx.Caption})")</span>
+                        </div>
                         <div class="taglist">
                             @foreach(var tag in trx.Tags.Where(t => t.TypeKey != "payee"))
                             {
                                 <span alt="@tag.TypeKey : @tag.Key" class="tag">@(!string.IsNullOrWhiteSpace(tag.Caption) ? tag.Caption : tag.Key)</span>
                             }
+
+                            <a asp-controller="Transactions" asp-action="Details" asp-route-id="@trx.Id">(+)</a>
                         </div>
                     </div>
                 </div>
-                <div class="cell"><span class="trx-amount @(trx.Amount > 0 ? "positive" : null)">@trx.Amount.ToCurrencyString() @Model.Details.Currency.ToCurrencyString()</span></div>
-                <div class="cell"><span class="trx-balance @(trx.Balance <= 0 ? "negative" : null)">@trx.Balance.ToCurrencyString() @Model.Details.Currency.ToCurrencyString()</span></div>
+                <div class="table-cell"><span class="trx-amount @(trx.Amount > 0 ? "positive" : null)">@trx.Amount.ToCurrencyString() @Model.Details.Currency.ToCurrencyString()</span></div>
+                <div class="table-cell"><span class="trx-balance @(trx.Balance <= 0 ? "negative" : null)">@trx.Balance.ToCurrencyString() @Model.Details.Currency.ToCurrencyString()</span></div>
             </div>
         }
         </div>

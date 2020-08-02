@@ -1,4 +1,5 @@
 using System;
+using System.Web;
 using dto;
 
 namespace web.Utils
@@ -16,5 +17,10 @@ namespace web.Utils
                 ECurrency.EUR => "€",
                 _ => string.Empty,
             };
+
+        /// <summary>
+        /// Permet de nettoyer une valeur paramètre query string avant l'envoi
+        /// </summary>
+        public static string ToCleanQuery(this string value) => HttpUtility.UrlEncode(value);
     }
 }

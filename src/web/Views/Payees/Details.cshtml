@@ -1,0 +1,52 @@
+@using web.Utils
+
+@model PayeeModel
+@{
+    ViewData["Title"] = $"Tiers {Model.Details.Caption}";
+}
+
+<h2>Tiers @Model.Details.Caption</h2>
+<span class="little">@Model.Details.Key</span>
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <h3>Statistiques</h3>
+        <div class="table100">
+            <div class="table-cell table-header"></div>
+            <div class="table-cell table-header">Amount</div>
+
+        @foreach(var stat in Model.Statistics)
+        {
+            <div class="table-row">
+                <div class="table-cell">@(new DateTime(stat.Year, stat.Month.Value, 1).ToString("MMM yyyy"))</div>
+                <div class="table-cell">@stat.Total.ToCurrencyString()</div>
+            </div>
+        }
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <h3>Transactions</h3>
+        <div class="table100">
+            <div class="table-row">
+                <div class="table-cell table-header">Date</div>
+                <div class="table-cell table-header">Caption</div>
+                <div class="table-cell table-header">Amount</div>
+            </div>
+
+        @foreach(var trx in Model.Transactions)
+        {
+            <div class="table-row">
+                <div class="table-cell">@trx.Date.ToString("dd MMM")</div>
+                <div class="table-cell">
+                    <div class="table-cell-transaction-caption">
+                        @{ var payee = @trx.Tags.SingleOrDefault(t => t.TypeKey == "payee"); }
+                        <div class="caption"><span alt="@payee?.Key">@payee?.Caption @(string.IsNullOrEmpty(trx.Caption) ? string.Empty : $"({trx.Caption})")</span></div>
+                    </div>
+                </div>
+                <div class="table-cell"><span class="trx-amount @(trx.Amount > 0 ? "positive" : null)">@trx.Amount.ToCurrencyString()</span></div>
+            </div>
+        }
+        </div>
+    </div>
+</div>
