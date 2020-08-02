@@ -121,6 +121,30 @@ namespace web.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task PutAsync<T>(string url, T body) where T : class
+        {
+            await PutAsync(url, JsonSerializer.Serialize<T>(body), "application/json");            
+        }
+
+        public async Task PutAsync(string url, string jsonBody, string mediaType) 
+        {
+            var content = new StringContent(jsonBody, Encoding.UTF8, mediaType);
+            var response = await _client.PutAsync(url, content);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"{url} => {response.StatusCode}");
+                throw new ApiClientException($"{response.StatusCode} : {await response.Content.ReadAsStringAsync()}");
+            }
+            else
+            {
+                if(_logger.IsEnabled(LogLevel.Debug))
+                {
+                    _logger.LogDebug($"{url} => {response.StatusCode}");
+                }
+            }
+        }
+
         private JsonSerializerOptions GetOptions()
         {
             var options = new JsonSerializerOptions();
