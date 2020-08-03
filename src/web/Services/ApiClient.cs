@@ -38,14 +38,14 @@ namespace web.Services
 
             if(!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"{url} => {response.StatusCode}");
+                _logger.LogWarning($"GET {url} => {response.StatusCode}");
                 throw new ApiClientException($"{response.StatusCode} : {await response.Content.ReadAsStringAsync()}");
             }
             else
             {
                 if(_logger.IsEnabled(LogLevel.Debug))
                 {
-                    _logger.LogDebug($"{url} => {response.StatusCode}");
+                    _logger.LogDebug($"GET {url} => {response.StatusCode}");
                 }
             }
 
@@ -73,14 +73,14 @@ namespace web.Services
 
             if(!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"{url} => {response.StatusCode}");
+                _logger.LogWarning($"POST {url} => {response.StatusCode}");
                 throw new ApiClientException($"{response.StatusCode} : {await response.Content.ReadAsStringAsync()}");
             }
             else
             {
                 if(_logger.IsEnabled(LogLevel.Debug))
                 {
-                    _logger.LogDebug($"{url} => {response.StatusCode}");
+                    _logger.LogDebug($"POST {url} => {response.StatusCode}");
                 }
             }
 
@@ -107,14 +107,14 @@ namespace web.Services
 
             if(!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"{url} => {response.StatusCode}");
+                _logger.LogWarning($"POST {url} => {response.StatusCode}");
                 throw new ApiClientException($"{response.StatusCode} : {await response.Content.ReadAsStringAsync()}");
             }
             else
             {
                 if(_logger.IsEnabled(LogLevel.Debug))
                 {
-                    _logger.LogDebug($"{url} => {response.StatusCode}");
+                    _logger.LogDebug($"POST {url} => {response.StatusCode}");
                 }
             }
 
@@ -133,14 +133,14 @@ namespace web.Services
 
             if(!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"{url} => {response.StatusCode}");
+                _logger.LogWarning($"PUT {url} => {response.StatusCode}");
                 throw new ApiClientException($"{response.StatusCode} : {await response.Content.ReadAsStringAsync()}");
             }
             else
             {
                 if(_logger.IsEnabled(LogLevel.Debug))
                 {
-                    _logger.LogDebug($"{url} => {response.StatusCode}");
+                    _logger.LogDebug($"PUT {url} => {response.StatusCode}");
                 }
             }
         }

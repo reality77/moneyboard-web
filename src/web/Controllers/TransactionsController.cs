@@ -34,7 +34,7 @@ namespace web.Controllers
         [ValidateAntiForgeryToken]
         [Route("{id}")]
         [HttpPost]
-        public async Task<IActionResult> PostDetails(int id, [FromBody] ImportedTransaction transaction)
+        public async Task<IActionResult> PostDetails(int id, [Bind("Caption,Comment,Date,UserDate")] ImportedTransaction transaction)
         {
             var trx = new TransactionEditRequest
             {
@@ -48,7 +48,7 @@ namespace web.Controllers
 
             var details = await _api.GetAsync<dto.Model.ImportedTransaction>($"transactions/{id}");
 
-            return View(details);
+            return View("Details", details);
         }
     }
 }

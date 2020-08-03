@@ -40,8 +40,8 @@
                 <div class="table-cell">@trx.Date.ToString("dd MMM")</div>
                 <div class="table-cell">
                     <div class="table-cell-transaction-caption">
-                        @{ var payee = @trx.Tags.SingleOrDefault(t => t.TypeKey == "payee"); }
-                        <div class="caption"><span alt="@payee?.Key">@payee?.Caption @(string.IsNullOrEmpty(trx.Caption) ? string.Empty : $"({trx.Caption})")</span></div>
+                        <a asp-controller="Transactions" asp-action="Details" asp-route-id="@trx.Id">(+)</a>
+                        <div class="caption">@trx.Caption</div>
                     </div>
                 </div>
                 <div class="table-cell"><span class="trx-amount @(trx.Amount > 0 ? "positive" : null)">@trx.Amount.ToCurrencyString()</span></div>
