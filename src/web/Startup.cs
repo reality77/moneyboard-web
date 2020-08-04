@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using web.Services;
 
 namespace web
@@ -26,6 +27,17 @@ namespace web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<ApiClient>(s => new ApiClient(s.GetService<ILogger<ApiClient>>(), s.GetService<IConfiguration>()));
+
+            services.AddAuthentication(opt => {
+                opt.DefaultChallengeScheme = "Keycloak";
+            }).AddOpenIdConnect(opt => 
+            {
+                opt.ClientId = Configuration.GetValue<string>("OpenIdConnect:Keycloak:ClientId");
+                opt.ClientSecret = Configuration.GetValue<string>("OpenIdConnect:Keycloak:ClientSecret");
+                opt.Authority = Configuration.GetValue<string>("OpenIdConnect:Keycloak:Authority");
+                opt.ResponseType = OpenIdConnectResponseType.Code;
+                opt.GetClaimsFromUserInfoEndpoint = true;
+            });
 
             var mvcBuilder = services.AddControllersWithViews();
 
