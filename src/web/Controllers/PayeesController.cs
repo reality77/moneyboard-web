@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using dto.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using web.Models;
@@ -13,6 +14,7 @@ using web.Utils;
 namespace web.Controllers
 {
     [Route("payees")]
+    [Authorize]
     public class PayeesController : Controller
     {
         private readonly ILogger<PayeesController> _logger;
