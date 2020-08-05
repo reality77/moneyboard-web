@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,15 +30,29 @@ namespace web
             services.AddTransient<ApiClient>(s => new ApiClient(s.GetService<ILogger<ApiClient>>(), s.GetService<IConfiguration>()));
 
             services.AddAuthentication(opt => {
-                opt.DefaultChallengeScheme = "Keycloak";
-            }).AddOpenIdConnect(opt => 
-            {
-                opt.ClientId = Configuration.GetValue<string>("OpenIdConnect:Keycloak:ClientId");
-                opt.ClientSecret = Configuration.GetValue<string>("OpenIdConnect:Keycloak:ClientSecret");
-                opt.Authority = Configuration.GetValue<string>("OpenIdConnect:Keycloak:Authority");
-                opt.ResponseType = OpenIdConnectResponseType.Code;
-                opt.GetClaimsFromUserInfoEndpoint = true;
-            });
+                    opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    opt.DefaultChallengeScheme = "Keycloak";
+                })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, c =>
+                {
+                    c.AccessDeniedPath = "/Home/Forbidden";
+                    // The default setting for cookie expiration is 14 days. SlidingExpiration is set to true by default
+                    c.ExpireTimeSpan = TimeSpan.FromHours(1);
+                    c.SlidingExpiration = true;
+                })
+            .AddOpenIdConnect("Keycloak", opt => 
+                {
+                    opt.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    opt.ClientId = Configuration.GetValue<string>("OpenIdConnect:Keycloak:ClientId");
+                    opt.ClientSecret = Configuration.GetValue<string>("OpenIdConnect:Keycloak:ClientSecret");
+                    opt.Authority = Configuration.GetValue<string>("OpenIdConnect:Keycloak:Authority");
+                    opt.RequireHttpsMetadata = false;
+                    opt.ResponseType = OpenIdConnectResponseType.Code;
+                    opt.GetClaimsFromUserInfoEndpoint = true;
+                    opt.SaveTokens = true;
+                });
+
+            services.AddAuthorization();
 
             var mvcBuilder = services.AddControllersWithViews();
 
@@ -52,6 +67,7 @@ namespace web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true; 
             }
             else
             {
@@ -64,6 +80,7 @@ namespace web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using dto.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using web.Models;
@@ -12,6 +13,7 @@ using web.Services;
 namespace web.Controllers
 {
     [Route("transactions")]
+    [Authorize]
     public class TransactionsController : Controller
     {
         private readonly ILogger<TransactionsController> _logger;
