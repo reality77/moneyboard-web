@@ -41,16 +41,18 @@ namespace web
                     c.ExpireTimeSpan = TimeSpan.FromHours(1);
                     c.SlidingExpiration = true;
                 })
-            .AddOpenIdConnect("Keycloak", opt => 
+            .AddOpenIdConnect("OpenIdConnect", opt => 
                 {
                     opt.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    opt.ClientId = Configuration.GetValue<string>("OpenIdConnect:Keycloak:ClientId");
-                    opt.ClientSecret = Configuration.GetValue<string>("OpenIdConnect:Keycloak:ClientSecret");
-                    opt.Authority = Configuration.GetValue<string>("OpenIdConnect:Keycloak:Authority");
+                    opt.ClientId = Configuration.GetValue<string>("OpenIdConnect:ClientId");
+                    opt.ClientSecret = Configuration.GetValue<string>("OpenIdConnect:ClientSecret");
+                    opt.Authority = Configuration.GetValue<string>("OpenIdConnect:Authority");
+                    opt.MetadataAddress = Configuration.GetValue<string>("OpenIdConnect:Authority");
                     opt.RequireHttpsMetadata = false;
                     opt.ResponseType = OpenIdConnectResponseType.Code;
                     opt.GetClaimsFromUserInfoEndpoint = true;
                     opt.SaveTokens = true;
+                    opt.MetadataAddress = Configuration.GetValue<string>("OpenIdConnect:Authority");
                 });
 
             services.AddAuthorization();
