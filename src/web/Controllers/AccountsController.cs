@@ -22,7 +22,6 @@ namespace web.Controllers
             _api = api;
         }
 
-
         [Route("{id}/transactions")]
         public async Task<IActionResult> Transactions(int id, int pageId = 0, int itemsPerPage = 200)
         {
@@ -32,7 +31,7 @@ namespace web.Controllers
             var model = new AccountTransactionsModel
             {
                 Details = details,
-                Transactions = transactions,
+                Transactions = transactions.GroupBy(k => k.Date),
             };
 
             return View(model);
