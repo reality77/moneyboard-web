@@ -32,7 +32,7 @@ namespace web
 
             services.AddAuthentication(opt => {
                     opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    opt.DefaultChallengeScheme = "Keycloak";
+                    opt.DefaultChallengeScheme = "OpenIdConnect";
                 })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, c =>
                 {
@@ -47,12 +47,10 @@ namespace web
                     opt.ClientId = Configuration.GetValue<string>("OpenIdConnect:ClientId");
                     opt.ClientSecret = Configuration.GetValue<string>("OpenIdConnect:ClientSecret");
                     opt.Authority = Configuration.GetValue<string>("OpenIdConnect:Authority");
-                    opt.MetadataAddress = Configuration.GetValue<string>("OpenIdConnect:Authority");
                     opt.RequireHttpsMetadata = false;
                     opt.ResponseType = OpenIdConnectResponseType.Code;
                     opt.GetClaimsFromUserInfoEndpoint = true;
                     opt.SaveTokens = true;
-                    opt.MetadataAddress = Configuration.GetValue<string>("OpenIdConnect:Authority");
                 });
 
             services.AddAuthorization();
