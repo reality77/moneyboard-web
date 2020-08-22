@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using web.Models;
 using web.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace web.Controllers
 {
@@ -45,6 +47,16 @@ namespace web.Controllers
         public IActionResult Login()
         {
             return RedirectToAction(nameof(Index));
+        }
+
+        [Route("~/logout")]
+        [AllowAnonymous]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> LogOut()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync("OpenIdConnect");
+            return Redirect("~/");
         }
 
         [AllowAnonymous]
