@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using web.Models;
@@ -11,6 +12,7 @@ using web.Services;
 namespace web.Controllers
 {
     [Route("accounts")]
+    [Authorize]
     public class AccountsController : Controller
     {
         private readonly ILogger<AccountsController> _logger;

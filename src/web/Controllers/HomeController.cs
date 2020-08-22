@@ -11,7 +11,6 @@ using web.Services;
 
 namespace web.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -23,22 +22,38 @@ namespace web.Controllers
             _api = api;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var accounts = await _api.GetAsync<IEnumerable<dto.Model.AccountBase>>("accounts");
-            var imports = await _api.GetAsync<IEnumerable<dto.Model.ImportedFile>>("import");
+            if(this.HttpContext.User.Identity.IsAuthenticated)
+            {
+                var accounts = await _api.GetAsync<IEnumerable<dto.Model.AccountBase>>("accounts");
+                var imports = await _api.GetAsync<IEnumerable<dto.Model.ImportedFile>>("import");
 
-            ViewBag.TotalBalance = accounts.Sum(a => a.Balance);
-            ViewBag.Updated = imports.Max(i => i.ImportDate);
+                ViewBag.TotalBalance = accounts.Sum(a => a.Balance);
+                ViewBag.Updated = imports.Max(i => i.ImportDate);
 
-            return View(accounts);
+                return View(accounts);
+            }
+            else
+                return View();
         }
 
+        [Route("~/login")]
+        [Authorize]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Login()
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
