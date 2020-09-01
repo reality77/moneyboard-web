@@ -4,8 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Moneyboard</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/lib/jquery-ui/dist/jquery-ui.css" />
+    <link rel="stylesheet" href="~/lib/choices.js/dist/styles/choices.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined|Material+Icons">
 </head>
 <body>
     <header>
@@ -50,8 +52,10 @@
             &copy; 2020 - web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="~/lib/jquery-ui/dist/jquery-ui.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js" ></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
