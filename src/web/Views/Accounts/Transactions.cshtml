@@ -5,6 +5,11 @@
     ViewData["Title"] = $"{Model.Details.Name} (transactions)";
 }
 
+@section Stylesheets
+{
+    <link rel="stylesheet" href="~/css/months.css" />
+}
+
 <div class="row">
 
     <h2>@Model.Details.Name</h2>
@@ -19,7 +24,7 @@
 
         @foreach(var trxgroup in Model.Transactions)
         {
-            <div class="table-row data-header">
+            <div class="table-row data-header month_@trxgroup.Key.Month">
                 <div class="table-cell">@trxgroup.Key.ToString("dd MMM")</div>
                 <div class="table-cell"><span class="trx-balance @(trxgroup.First().Balance <= 0 ? "negative" : null)">@trxgroup.First().Balance.ToCurrencyString() @Model.Details.Currency.ToCurrencyString()</span></div>
             </div>

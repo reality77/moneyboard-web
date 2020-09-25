@@ -1,0 +1,48 @@
+// ****** Classes de base bootstrap
+
+// https://coolors.co/1b264f-213670-274690-576ca8-444c68-302b27-f5f3f5
+
+
+// Your variable overrides
+
+$palette_1: #1B264F;
+$palette_2: #213670;
+$palette_3: #274690;
+$palette_4: #576CA8;
+$palette_5: #444C68;
+$palette_6: #302B27;
+$palette_7: #F5F3F5;
+
+$gray-100: #F6F5F4;
+$gray-200: #E3E0DD;
+$gray-300: #D1CCC7;
+$gray-400: #BFB8B0;
+$gray-500: #ACA49A;
+$gray-600: #877C6E;
+$gray-700: #655D53;
+$gray-800: #433E37;
+$gray-900: #221F1C;
+
+$header-back: $gray-800;
+$header-border: $gray-700;
+
+$body-bg: $gray-900;
+$body-color: $gray-300;
+
+//$primary:       $blue !default;
+//$secondary:     $gray-600 !default;
+//$success:       $green !default;
+//$info:          $cyan !default;
+//$warning:       $yellow !default;
+$danger: #7B0828;
+//$light:         $gray-100 !default;
+//$dark:          $gray-800 !default;
+
+// Contenu nécessaire
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/bootstrap-select/sass/bootstrap-select.scss";
+@import "../node_modules/bootstrap/scss/_variables";
+@import "../node_modules/bootstrap/scss/_mixins";
+@import "../node_modules/bootstrap/scss/bootstrap-reboot.scss";
+
+// ****** Classes de base

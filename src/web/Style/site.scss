@@ -1,27 +1,12 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+@import "common";
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
-}
-
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
 }
 
 /* Sticky footer styles
@@ -35,21 +20,6 @@ html {
   }
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
 
 /* Sticky footer styles
 -------------------------------------------------- */
@@ -72,7 +42,7 @@ body {
 
 .little {
   font-size: smaller;
-  color: gray;
+  color: $gray-600;
 }
 
 .table-header {
@@ -89,11 +59,11 @@ body {
 }
 
 .positive {
-  color: green;
+  color: $success;
 }
 
 .negative {
-  color: darkred;
+  color: $danger;
 }
 
 .table {
@@ -103,6 +73,7 @@ body {
 .table100{
   display: table;
   width: 100%;
+  border-spacing: 0px 0.7rem;
 }
 
 .table-row{
@@ -110,13 +81,13 @@ body {
 }
 
 .data-header > .table-cell {
-  background-color: #baf7a252;
-  border-top: solid 2px rgb(90, 189, 115);
+  font-weight: 600;
+  color: $gray-900;
 }
 
 .data-header > .table-cell:first-child {
   border-top-left-radius: 4px;
-  border-left: solid 2px rgb(90, 189, 115);
+  border-left: solid 2px $header-border;
   padding-left: 1rem;
 }
 
@@ -149,7 +120,7 @@ body {
 }
 
 span.tag {
-  border: darkseagreen;
+  border: $header-border;
   border-style: solid;
   border-radius: 5px;
   padding: 0 2px 0 2px;
