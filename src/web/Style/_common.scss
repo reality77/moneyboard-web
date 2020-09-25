@@ -4,16 +4,12 @@
 
 
 // Your variable overrides
-//$body-bg: #302B27;
-//$body-color: #F5F3F5;
 
 $palette_1: #1B264F;
 $palette_2: #213670;
 $palette_3: #274690;
 $palette_4: #576CA8;
 $palette_5: #444C68;
-$palette_5_light: #E6E8EF;
-$palette_5_lighter: #F3F4F7;
 $palette_6: #302B27;
 $palette_7: #F5F3F5;
 
@@ -27,8 +23,11 @@ $gray-700: #655D53;
 $gray-800: #433E37;
 $gray-900: #221F1C;
 
-$header-back: $palette_5_lighter;
-$header-border: $palette_5;
+$header-back: $gray-800;
+$header-border: $gray-700;
+
+$body-bg: $gray-900;
+$body-color: $gray-300;
 
 //$primary:       $blue !default;
 //$secondary:     $gray-600 !default;
