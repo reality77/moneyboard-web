@@ -67,6 +67,14 @@ gulp.task('images', function () {
     return gulp.src("./Style/images/**/*.*").pipe(gulp.dest(targetPath + "/images/"));
 });
 
+gulp.task('chartjs-js', function () {
+    return gulp.src(nodeRoot + "chart.js/dist/Chart.min.js").pipe(gulp.dest(targetLibPath + "/chart.js/dist/"));
+});
+
+gulp.task('chartjs-css', function () {
+    return gulp.src(nodeRoot + "chart.js/dist/Chart.css").pipe(gulp.dest(targetLibPath + "/chart.js/dist/"));
+});
+
 gulp.task('bootstrap-js', function () {
     return gulp.src(nodeRoot + "bootstrap/dist/**/*.js*").pipe(gulp.dest(targetLibPath + "/bootstrap/dist/"));
 });
@@ -99,7 +107,7 @@ gulp.task('scripts', function() {
 });
 
 
-gulp.task('default', gulp.series('clean', 'css', 'fonts', 'icons', 'images', 'bootstrap-js', 'bootstrap-select-js', 'jquery', 'jquery-ui', 'jquery-validation', 'jquery-validation-unobtrusive', 'scripts'));
+gulp.task('default', gulp.series('clean', 'css', 'fonts', 'icons', 'images', 'chartjs-js', 'chartjs-css', 'bootstrap-js', 'bootstrap-select-js', 'jquery', 'jquery-ui', 'jquery-validation', 'jquery-validation-unobtrusive', 'scripts'));
 
 // Watch task.
 gulp.task('watch', function() {

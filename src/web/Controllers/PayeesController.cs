@@ -41,11 +41,36 @@ namespace web.Controllers
 
             var stats = await _api.PostAsync<IEnumerable<dto.Model.TagStatisticsModel>>($"tags/payee/{key.ToCleanQuery()}/statistics", System.Text.Json.JsonSerializer.Serialize(request), "application/json");
 
+            var statsOrdered = stats.OrderBy(s => s.Year).ThenBy(s => s.Month);
+
+            var statsWithEmptyMonthsFilled = new List<dto.Model.TagStatisticsModel>();
+
+            dto.Model.TagStatisticsModel lastStat = null;
+            int minYear = 0;
+
+            foreach(var stat in statsOrdered)
+            {
+                if(lastStat != null)
+                {
+                    int lastMonthIndex = ((lastStat.Year - minYear) + 1) * lastStat.Month.Value;
+                    int currentMonthIndex = ((stat.Year - minYear) + 1) * stat.Month.Value;
+
+                    for(int monthIndex = lastMonthIndex + 1; monthIndex < currentMonthIndex; monthIndex ++)
+                        statsWithEmptyMonthsFilled.Add(new TagStatisticsModel { Year = minYear, Month = monthIndex, Day = null, Total = 0 });
+                }
+                else
+                    minYear = stat.Year;
+
+                statsWithEmptyMonthsFilled.Add(stat);
+
+                lastStat = stat;
+            }
+
             var model = new PayeeModel
             {
                 Details = details,
                 Transactions = transactions.OrderByDescending(t => t.UserDate).ThenByDescending(t => t.Date),
-                Statistics = stats.OrderByDescending(s => s.Year).ThenByDescending(s => s.Month).ThenByDescending(s => s.Day),
+                Statistics = statsWithEmptyMonthsFilled,
             };
 
             return View(model);
