@@ -73,6 +73,7 @@ body {
 .table100{
   display: table;
   width: 100%;
+  border-spacing: 0px 0.7rem;
 }
 
 .table-row{
@@ -80,8 +81,7 @@ body {
 }
 
 .data-header > .table-cell {
-  background-color: $header-back;
-  //border-top: solid 2px $header-border;
+  font-weight: 600;
 }
 
 .data-header > .table-cell:first-child {

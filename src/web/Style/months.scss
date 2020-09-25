@@ -1,0 +1,75 @@
+
+$month_1: rgb(75, 154, 218);
+$month_2: #3dabaf;
+$month_3: #3ac785;
+$month_4: #3fc73a;
+$month_5: #7ec73a;
+$month_6: #c7b23a;
+$month_7: #f5815e;
+$month_8: #ee5555;
+$month_9: #7440d4;
+$month_10: #544ab4;
+$month_11: #606bac;
+$month_12: rgb(75, 106, 218);
+
+$lightpercent: 30%;
+
+.month_1 {
+    background-color: lighten($month_1, $lightpercent);
+    border-color: $month_1;
+}
+
+.month_2 {
+    background-color: lighten($month_2, $lightpercent);
+    border-color: $month_2;
+}
+
+.month_3 {
+    background-color: lighten($month_3, $lightpercent);
+    border-color: $month_3;
+}
+
+.month_4 {
+    background-color: lighten($month_4, $lightpercent);
+    border-color: $month_4;
+}
+
+.month_5 {
+    background-color: lighten($month_5, $lightpercent);
+    border-color: $month_5;
+}
+
+.month_6 {
+    background-color: lighten($month_6, $lightpercent);
+    border-color: $month_6;
+}
+
+.month_7 {
+    background-color: lighten($month_7, 20%);
+    border-color: $month_7;
+}
+
+.month_8 {
+    background-color: lighten($month_8, 20%);
+    border-color: $month_8;
+}
+
+.month_9 {
+    background-color: lighten($month_9, $lightpercent);
+    border-color: $month_9;
+}
+
+.month_10 {
+    background-color: lighten($month_10, $lightpercent);
+    border-color: $month_10;
+}
+
+.month_11 {
+    background-color: lighten($month_11, $lightpercent);
+    border-color: $month_11;
+}
+
+.month_12 {
+    background-color: lighten($month_12, $lightpercent);
+    border-color: $month_12;
+}
