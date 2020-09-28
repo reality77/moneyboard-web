@@ -15,9 +15,9 @@ namespace web.Controllers
 {
     [Route("tags")]
     [Authorize]
-    public class TagController : TagControllerBase
+    public class TagsController : TagControllerBase
     {
-        public TagController(ILogger<TagController> logger, ApiClient api)
+        public TagsController(ILogger<TagsController> logger, ApiClient api)
         : base(logger, api)
         {
         }

@@ -43,7 +43,7 @@
                             <div class="taglist">
                                 @foreach(var tag in trx.Tags.Where(t => t.TypeKey != "payee"))
                                 {
-                                    <span alt="@tag.TypeKey : @tag.Key" class="tag">@(!string.IsNullOrWhiteSpace(tag.Caption) ? tag.Caption : tag.Key)</span>
+                                    <span alt="@tag.TypeKey : @tag.Key" class="tag"><a asp-controller="Tags" asp-action="Details" asp-route-tagType="@tag.TypeKey" asp-route-tagKey="@tag.Key">@(!string.IsNullOrWhiteSpace(tag.Caption) ? tag.Caption : tag.Key)</a></span>
                                 }
                             </div>
                         </div>
