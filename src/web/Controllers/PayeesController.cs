@@ -35,37 +35,32 @@ namespace web.Controllers
             var request = new TagStatisticsRequest
             {
                 Range = EDateRange.Months,
-                DateStart = new DateTime(DateTime.Today.Year - 1, DateTime.Today.Month, 1),
-                DateEnd = new DateTime(DateTime.Today.Year, DateTime.Today.Month + 1, 1),
+                DateStart = new DateTime(DateTime.Today.Year - 1, DateTime.Today.Month, 1).AddMonths(1),
+                DateEnd = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddMilliseconds(-1),
             };
 
             var stats = await _api.PostAsync<IEnumerable<dto.Model.TagStatisticsModel>>($"tags/payee/{key.ToCleanQuery()}/statistics", System.Text.Json.JsonSerializer.Serialize(request), "application/json");
 
-            var statsOrdered = stats.OrderBy(s => s.Year).ThenBy(s => s.Month);
+            var dicStats = stats.ToDictionary(s => (Year: s.Year, Month: s.Month.Value));
 
             var statsWithEmptyMonthsFilled = new List<dto.Model.TagStatisticsModel>();
 
-            dto.Model.TagStatisticsModel lastStat = null;
-            int minYear = 0;
-
-            foreach(var stat in statsOrdered)
+            for(var date = request.DateStart.Value; date <= request.DateEnd.Value; date = date.AddMonths(1))
             {
-                if(lastStat != null)
+                if(dicStats.TryGetValue((date.Year, date.Month), out TagStatisticsModel stat))
                 {
-                    int lastMonthIndex = (lastStat.Year - minYear) * 12 + lastStat.Month.Value - 1;
-                    int currentMonthIndex = (stat.Year - minYear) * 12 + stat.Month.Value - 1;
-
-                    for(int monthIndex = lastMonthIndex + 1; monthIndex < currentMonthIndex; monthIndex ++)
-                        statsWithEmptyMonthsFilled.Add(new TagStatisticsModel { Year = minYear + (monthIndex / 12), Month = (monthIndex % 12) + 1, Day = null, Total = 0 });
+                    statsWithEmptyMonthsFilled.Add(stat);
                 }
                 else
                 {
-                    minYear = stat.Year;
-                }
-
-                statsWithEmptyMonthsFilled.Add(stat);
-
-                lastStat = stat;
+                    statsWithEmptyMonthsFilled.Add(new TagStatisticsModel 
+                    { 
+                        Year = date.Year, 
+                        Month = date.Month, 
+                        Day = null, 
+                        Total = 0 }
+                    );
+                }    
             }
 
             var model = new PayeeModel
