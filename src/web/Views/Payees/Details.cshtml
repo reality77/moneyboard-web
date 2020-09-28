@@ -63,6 +63,8 @@
 {
     <script src="~/lib/chart.js/dist/Chart.min.js" ></script>
 
+    @{decimal moyenne = Model.Statistics.Average(s => s.Total);}
+
     <script>
     var ctx = document.getElementById('chartStatistics').getContext('2d');
     var myChart = new Chart(ctx, {
@@ -79,6 +81,16 @@
                 ],
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Moyenne',
+                data: [
+                    @Html.Raw(Model.Statistics.Select(s => moyenne.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)).Aggregate((a, b) => a + ", " + b))
+                ],
+                // Changes this dataset to become a line
+                type: 'line',
+                borderColor: 'rgba(255, 132, 99, 1)',
                 borderWidth: 1
             }]
         },

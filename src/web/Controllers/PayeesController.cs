@@ -52,14 +52,16 @@ namespace web.Controllers
             {
                 if(lastStat != null)
                 {
-                    int lastMonthIndex = ((lastStat.Year - minYear) + 1) * lastStat.Month.Value;
-                    int currentMonthIndex = ((stat.Year - minYear) + 1) * stat.Month.Value;
+                    int lastMonthIndex = (lastStat.Year - minYear) * 12 + lastStat.Month.Value - 1;
+                    int currentMonthIndex = (stat.Year - minYear) * 12 + stat.Month.Value - 1;
 
                     for(int monthIndex = lastMonthIndex + 1; monthIndex < currentMonthIndex; monthIndex ++)
-                        statsWithEmptyMonthsFilled.Add(new TagStatisticsModel { Year = minYear, Month = monthIndex, Day = null, Total = 0 });
+                        statsWithEmptyMonthsFilled.Add(new TagStatisticsModel { Year = minYear + (monthIndex / 12), Month = (monthIndex % 12) + 1, Day = null, Total = 0 });
                 }
                 else
+                {
                     minYear = stat.Year;
+                }
 
                 statsWithEmptyMonthsFilled.Add(stat);
 
