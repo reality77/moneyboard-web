@@ -1,0 +1,43 @@
+@using web.Utils
+
+@model dto.Model.Transaction
+@* 
+    Paramètres ViewData facultatifs : 
+    - CurrencyString (default : empty)
+    - DisplayTransactionDate (default : true)
+*@
+
+@{
+    var currencyString = string.Empty;
+    var displayTransactionDate = true;
+
+    if(ViewData.ContainsKey("CurrencyString"))
+        currencyString = $" {ViewData["CurrencyString"]}";
+
+    if(ViewData.ContainsKey("DisplayTransactionDate"))
+        displayTransactionDate = (bool)ViewData["DisplayTransactionDate"];
+}
+
+<div class="table-row data-content">
+    @if(displayTransactionDate)
+    {
+    <div class="table-cell">@Model.Date.ToString("dd MMM")</div>
+    }
+    <div class="table-cell">
+        <div class="table-cell-transaction-caption">
+            <a asp-controller="Transactions" asp-action="Details" asp-route-id="@Model.Id">(+)</a>
+
+            @{ var payee = @Model.Tags.SingleOrDefault(t => t.TypeKey == "payee"); }
+            <div class="caption">
+                <span alt="@payee?.Key"><a asp-controller="Payees" asp-action="Details" asp-route-key="@payee?.Key">@payee?.Caption</a> @(string.IsNullOrEmpty(Model.Caption) ? string.Empty : $"({Model.Caption})")</span>
+            </div>
+            <div class="taglist">
+                @foreach(var tag in Model.Tags.Where(t => t.TypeKey != "payee"))
+                {
+                    <span alt="@tag.TypeKey : @tag.Key" class="tag"><a asp-controller="Tags" asp-action="Details" asp-route-tagType="@tag.TypeKey" asp-route-tagKey="@tag.Key">@(!string.IsNullOrWhiteSpace(tag.Caption) ? tag.Caption : tag.Key)</a></span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-cell"><span class="trx-amount @(Model.Amount > 0 ? "positive" : null)">@(Model.Amount.ToCurrencyString() + currencyString)</span></div>
+</div>

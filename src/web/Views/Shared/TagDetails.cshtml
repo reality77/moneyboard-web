@@ -43,19 +43,7 @@
 
         @foreach(var trx in Model.Transactions)
         {
-            <div class="table-row">
-                <div class="table-cell">@trx.Date.ToString("dd MMM")</div>
-                <div class="table-cell">
-                    <div class="table-cell-transaction-caption">
-                        <a asp-controller="Transactions" asp-action="Details" asp-route-id="@trx.Id">(+)</a>
-                        @{ var payee = @trx.Tags.SingleOrDefault(t => t.TypeKey == "payee"); }
-                        <div class="caption">
-                            <span alt="@payee?.Key"><a asp-controller="Payees" asp-action="Details" asp-route-key="@payee?.Key">@payee?.Caption</a> @(string.IsNullOrEmpty(trx.Caption) ? string.Empty : $"({trx.Caption})")</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-cell"><span class="trx-amount @(trx.Amount > 0 ? "positive" : null)">@trx.Amount.ToCurrencyString()</span></div>
-            </div>
+            @await Html.PartialAsync("_SingleTransaction", trx);
         }
         </div>
     </div>

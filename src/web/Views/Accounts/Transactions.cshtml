@@ -31,25 +31,7 @@
 
             foreach(var trx in trxgroup)
             {
-                <div class="table-row data-content">
-                    <div class="table-cell">
-                        <div class="table-cell-transaction-caption">
-                            <a asp-controller="Transactions" asp-action="Details" asp-route-id="@trx.Id">(+)</a>
-
-                            @{ var payee = @trx.Tags.SingleOrDefault(t => t.TypeKey == "payee"); }
-                            <div class="caption">
-                                <span alt="@payee?.Key"><a asp-controller="Payees" asp-action="Details" asp-route-key="@payee?.Key">@payee?.Caption</a> @(string.IsNullOrEmpty(trx.Caption) ? string.Empty : $"({trx.Caption})")</span>
-                            </div>
-                            <div class="taglist">
-                                @foreach(var tag in trx.Tags.Where(t => t.TypeKey != "payee"))
-                                {
-                                    <span alt="@tag.TypeKey : @tag.Key" class="tag"><a asp-controller="Tags" asp-action="Details" asp-route-tagType="@tag.TypeKey" asp-route-tagKey="@tag.Key">@(!string.IsNullOrWhiteSpace(tag.Caption) ? tag.Caption : tag.Key)</a></span>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-cell"><span class="trx-amount @(trx.Amount > 0 ? "positive" : null)">@trx.Amount.ToCurrencyString() @Model.Details.Currency.ToCurrencyString()</span></div>
-                </div>
+                @await Html.PartialAsync("_SingleTransaction", trx, new ViewDataDictionary(ViewData) { { "CurrencyString", Model.Details.Currency.ToCurrencyString() }, { "DisplayTransactionDate", false } });
             }
         }
         </div>
