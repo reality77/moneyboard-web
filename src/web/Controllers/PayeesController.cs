@@ -35,17 +35,39 @@ namespace web.Controllers
             var request = new TagStatisticsRequest
             {
                 Range = EDateRange.Months,
-                DateStart = new DateTime(DateTime.Today.Year - 1, DateTime.Today.Month, 1),
-                DateEnd = new DateTime(DateTime.Today.Year, DateTime.Today.Month + 1, 1),
+                DateStart = new DateTime(DateTime.Today.Year - 1, DateTime.Today.Month, 1).AddMonths(1),
+                DateEnd = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddMilliseconds(-1),
             };
 
             var stats = await _api.PostAsync<IEnumerable<dto.Model.TagStatisticsModel>>($"tags/payee/{key.ToCleanQuery()}/statistics", System.Text.Json.JsonSerializer.Serialize(request), "application/json");
+
+            var dicStats = stats.ToDictionary(s => (Year: s.Year, Month: s.Month.Value));
+
+            var statsWithEmptyMonthsFilled = new List<dto.Model.TagStatisticsModel>();
+
+            for(var date = request.DateStart.Value; date <= request.DateEnd.Value; date = date.AddMonths(1))
+            {
+                if(dicStats.TryGetValue((date.Year, date.Month), out TagStatisticsModel stat))
+                {
+                    statsWithEmptyMonthsFilled.Add(stat);
+                }
+                else
+                {
+                    statsWithEmptyMonthsFilled.Add(new TagStatisticsModel 
+                    { 
+                        Year = date.Year, 
+                        Month = date.Month, 
+                        Day = null, 
+                        Total = 0 }
+                    );
+                }    
+            }
 
             var model = new PayeeModel
             {
                 Details = details,
                 Transactions = transactions.OrderByDescending(t => t.UserDate).ThenByDescending(t => t.Date),
-                Statistics = stats.OrderByDescending(s => s.Year).ThenByDescending(s => s.Month).ThenByDescending(s => s.Day),
+                Statistics = statsWithEmptyMonthsFilled,
             };
 
             return View(model);

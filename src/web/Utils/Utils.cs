@@ -22,5 +22,7 @@ namespace web.Utils
         /// Permet de nettoyer une valeur paramètre query string avant l'envoi
         /// </summary>
         public static string ToCleanQuery(this string value) => HttpUtility.UrlEncode(value);
+
+        public static DateTime ToDate(this dto.Model.TagStatisticsModel model) => new DateTime(model.Year, model.Month ?? 1, model.Day ?? 1);
     }
 }
