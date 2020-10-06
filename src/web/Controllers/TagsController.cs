@@ -13,19 +13,19 @@ using web.Utils;
 
 namespace web.Controllers
 {
-    [Route("payees")]
+    [Route("tags")]
     [Authorize]
-    public class PayeesController : TagControllerBase
+    public class TagsController : TagControllerBase
     {
-        public PayeesController(ILogger<PayeesController> logger, ApiClient api)
+        public TagsController(ILogger<TagsController> logger, ApiClient api)
         : base(logger, api)
         {
         }
 
-        [Route("{key}")]
-        public async Task<IActionResult> Details(string key)
+        [Route("{tagType}/{tagKey}")]
+        public async Task<IActionResult> Details(string tagType, string tagKey)
         {
-            return await base.DetailsInternalAsync<PayeeModel>("payee", key);
+            return await base.DetailsInternalAsync<TagModel>(tagType, tagKey);
         }
     }
 }

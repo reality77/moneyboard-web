@@ -1,6 +1,6 @@
 @using web.Utils
 
-@model PayeeModel
+@model TagModel
 @{
     ViewData["Title"] = $"Tiers {Model.Details.Caption}";
 }
@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/lib/chart.js/dist/Chart.css" />
 }
 
-<h2>Tiers @Model.Details.Caption</h2>
+<h2>@Model.Details.TypeKey @Model.Details.Caption</h2>
 <span class="little">@Model.Details.Key</span>
 
 <div class="row">
@@ -43,16 +43,7 @@
 
         @foreach(var trx in Model.Transactions)
         {
-            <div class="table-row">
-                <div class="table-cell">@trx.Date.ToString("dd MMM")</div>
-                <div class="table-cell">
-                    <div class="table-cell-transaction-caption">
-                        <a asp-controller="Transactions" asp-action="Details" asp-route-id="@trx.Id">(+)</a>
-                        <div class="caption">@trx.Caption</div>
-                    </div>
-                </div>
-                <div class="table-cell"><span class="trx-amount @(trx.Amount > 0 ? "positive" : null)">@trx.Amount.ToCurrencyString()</span></div>
-            </div>
+            @await Html.PartialAsync("_SingleTransaction", trx);
         }
         </div>
     </div>
