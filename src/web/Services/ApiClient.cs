@@ -8,6 +8,8 @@ using System.Text.Json.Serialization;
 using System.Net;
 using System.IO;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 namespace web.Services
 {
@@ -16,11 +18,14 @@ namespace web.Services
         private readonly ILogger<ApiClient> _logger;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _client;
+        private readonly IHttpContextAccessor _httpcontextAccessor;
+
         
-        public ApiClient(ILogger<ApiClient> logger, IConfiguration configuration)
+        public ApiClient(ILogger<ApiClient> logger, IConfiguration configuration, IHttpContextAccessor httpcontextAccessor)
         {
             _logger = logger;
             _configuration = configuration;
+            _httpcontextAccessor = httpcontextAccessor;
 
             var httpClientHandler = new HttpClientHandler();
             httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
@@ -31,6 +36,11 @@ namespace web.Services
 
         public async Task<T> GetAsync<T>(string url, bool setNullIf404 = true) 
         {
+            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
+
+            _client.DefaultRequestHeaders.Remove("Bearer");
+            _client.DefaultRequestHeaders.Add("Bearer", token);
+
             var response = await _client.GetAsync(url);
 
             if(setNullIf404 && response.StatusCode == HttpStatusCode.NotFound)
@@ -68,8 +78,13 @@ namespace web.Services
 
         public async Task<T> PostAsync<T>(string url, string jsonBody, string mediaType) 
         {
+            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
+
             var content = new StringContent(jsonBody, Encoding.UTF8, mediaType);
             var response = await _client.PostAsync(url, content);
+
+            _client.DefaultRequestHeaders.Remove("Bearer");
+            _client.DefaultRequestHeaders.Add("Bearer", token);
 
             if(!response.IsSuccessStatusCode)
             {
@@ -98,10 +113,15 @@ namespace web.Services
 
         public async Task<string> PostFileAsync(string url, string filePath)
         {
+            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
+            
             var content = new MultipartFormDataContent();
             var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
             content.Add(new StreamContent(stream), Path.GetFileName(filePath), Path.GetFileName(filePath));
+
+            _client.DefaultRequestHeaders.Remove("Bearer");
+            _client.DefaultRequestHeaders.Add("Bearer", token);
 
             var response = await _client.PostAsync(url, content);
 
@@ -128,7 +148,12 @@ namespace web.Services
 
         public async Task PutAsync(string url, string jsonBody, string mediaType) 
         {
+            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
             var content = new StringContent(jsonBody, Encoding.UTF8, mediaType);
+
+            _client.DefaultRequestHeaders.Remove("Bearer");
+            _client.DefaultRequestHeaders.Add("Bearer", token);
+
             var response = await _client.PutAsync(url, content);
 
             if(!response.IsSuccessStatusCode)
