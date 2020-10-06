@@ -38,8 +38,8 @@ namespace web.Services
         {
             var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
 
-            _client.DefaultRequestHeaders.Remove("Bearer");
-            _client.DefaultRequestHeaders.Add("Bearer", token);
+            _client.DefaultRequestHeaders.Remove("Authorization");
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
             var response = await _client.GetAsync(url);
 
@@ -81,10 +81,11 @@ namespace web.Services
             var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
 
             var content = new StringContent(jsonBody, Encoding.UTF8, mediaType);
-            var response = await _client.PostAsync(url, content);
 
-            _client.DefaultRequestHeaders.Remove("Bearer");
-            _client.DefaultRequestHeaders.Add("Bearer", token);
+            _client.DefaultRequestHeaders.Remove("Authorization");
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
+            var response = await _client.PostAsync(url, content);
 
             if(!response.IsSuccessStatusCode)
             {
@@ -120,8 +121,8 @@ namespace web.Services
 
             content.Add(new StreamContent(stream), Path.GetFileName(filePath), Path.GetFileName(filePath));
 
-            _client.DefaultRequestHeaders.Remove("Bearer");
-            _client.DefaultRequestHeaders.Add("Bearer", token);
+            _client.DefaultRequestHeaders.Remove("Authorization");
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
             var response = await _client.PostAsync(url, content);
 
@@ -151,8 +152,8 @@ namespace web.Services
             var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
             var content = new StringContent(jsonBody, Encoding.UTF8, mediaType);
 
-            _client.DefaultRequestHeaders.Remove("Bearer");
-            _client.DefaultRequestHeaders.Add("Bearer", token);
+            _client.DefaultRequestHeaders.Remove("Authorization");
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
             var response = await _client.PutAsync(url, content);
 
