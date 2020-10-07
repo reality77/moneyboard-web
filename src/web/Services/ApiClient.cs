@@ -36,10 +36,7 @@ namespace web.Services
 
         public async Task<T> GetAsync<T>(string url, bool setNullIf404 = true) 
         {
-            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
-
-            _client.DefaultRequestHeaders.Remove("Authorization");
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            await SetJwtTokenAsync();
 
             var response = await _client.GetAsync(url);
 
@@ -78,12 +75,9 @@ namespace web.Services
 
         public async Task<T> PostAsync<T>(string url, string jsonBody, string mediaType) 
         {
-            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
-
             var content = new StringContent(jsonBody, Encoding.UTF8, mediaType);
 
-            _client.DefaultRequestHeaders.Remove("Authorization");
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            await SetJwtTokenAsync();
 
             var response = await _client.PostAsync(url, content);
 
@@ -114,15 +108,12 @@ namespace web.Services
 
         public async Task<string> PostFileAsync(string url, string filePath)
         {
-            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
-            
             var content = new MultipartFormDataContent();
             var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
             content.Add(new StreamContent(stream), Path.GetFileName(filePath), Path.GetFileName(filePath));
 
-            _client.DefaultRequestHeaders.Remove("Authorization");
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            await SetJwtTokenAsync();
 
             var response = await _client.PostAsync(url, content);
 
@@ -149,11 +140,9 @@ namespace web.Services
 
         public async Task PutAsync(string url, string jsonBody, string mediaType) 
         {
-            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
             var content = new StringContent(jsonBody, Encoding.UTF8, mediaType);
 
-            _client.DefaultRequestHeaders.Remove("Authorization");
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            await SetJwtTokenAsync();
 
             var response = await _client.PutAsync(url, content);
 
@@ -169,6 +158,15 @@ namespace web.Services
                     _logger.LogDebug($"PUT {url} => {response.StatusCode}");
                 }
             }
+        }
+
+        private async Task SetJwtTokenAsync()
+        {
+            var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
+            _client.DefaultRequestHeaders.Remove("Authorization");
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
+            //_logger.LogDebug(token);
         }
 
         private JsonSerializerOptions GetOptions()

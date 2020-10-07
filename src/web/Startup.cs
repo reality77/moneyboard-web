@@ -39,8 +39,8 @@ namespace web
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, c =>
                 {
                     c.AccessDeniedPath = "/Home/Forbidden";
-                    // The default setting for cookie expiration is 14 days. SlidingExpiration is set to true by default
-                    c.ExpireTimeSpan = TimeSpan.FromHours(1);
+                    // L'expiration doit être inférieure à l'expiration de l'access token OpenIdConnect
+                    c.ExpireTimeSpan = TimeSpan.FromMinutes(Configuration.GetValue<int>("CookieExpiration"));
                     c.SlidingExpiration = true;
                 })
             .AddOpenIdConnect("OpenIdConnect", opt => 

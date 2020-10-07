@@ -15,5 +15,6 @@
       "Authority":""
     }
   },
+  "CookieExpiration" : 15,
   "AllowedHosts": "*"
 }
