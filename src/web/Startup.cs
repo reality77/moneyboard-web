@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +54,21 @@ namespace web
                     opt.ResponseType = OpenIdConnectResponseType.Code;
                     opt.GetClaimsFromUserInfoEndpoint = true;
                     opt.SaveTokens = true;
+
+                    opt.Events = new OpenIdConnectEvents
+                    {
+                        OnRedirectToIdentityProvider = redirectContext =>
+                        {
+                            /*
+                            //if (!_env.IsEnvironment("Debug"))
+                            {
+                                //Force scheme of redirect URI (THE IMPORTANT PART)
+                                redirectContext.ProtocolMessage.RedirectUri = redirectContext.ProtocolMessage.RedirectUri.Replace("http://", "https://", StringComparison.OrdinalIgnoreCase);
+                            }*/
+                            return Task.FromResult(0);
+                        }
+                    };
+
                 });
 
             services.AddAuthorization();
@@ -78,7 +94,6 @@ namespace web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true; 
             }
             else
             {
@@ -87,7 +102,9 @@ namespace web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true; 
+            
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
