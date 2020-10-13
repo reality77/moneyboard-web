@@ -55,6 +55,11 @@ namespace web
                     opt.GetClaimsFromUserInfoEndpoint = true;
                     opt.SaveTokens = true;
 
+                    // --- Fix pour pb de cookie non créé par Chrome (https://stackoverflow.com/a/60668367)
+                    opt.NonceCookie.SameSite = SameSiteMode.Unspecified;
+                    opt.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
+                    // --- fin fix
+
                     opt.Events = new OpenIdConnectEvents
                     {
                         OnRedirectToIdentityProvider = redirectContext =>
