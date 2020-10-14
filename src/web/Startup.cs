@@ -46,33 +46,103 @@ namespace web
                 })
             .AddOpenIdConnect("OpenIdConnect", opt => 
                 {
+                    var authority = Configuration.GetValue<string>("OpenIdConnect:Authority");
+                    var configPublicAuthorities = Configuration.GetSection("OpenIdConnect:PublicAuthorityAliases");
+                    Dictionary<string, string> dicPublicAuthorities = null;
+
+                    if(configPublicAuthorities != null)
+                    {
+                        dicPublicAuthorities = configPublicAuthorities.GetChildren().ToDictionary(
+                            keySelector: c => c.GetValue<string>("Host"),
+                            elementSelector: c => c.GetValue<string>("Authority")
+                        );
+                    }
+
                     opt.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     opt.ClientId = Configuration.GetValue<string>("OpenIdConnect:ClientId");
                     opt.ClientSecret = Configuration.GetValue<string>("OpenIdConnect:ClientSecret");
-                    opt.Authority = Configuration.GetValue<string>("OpenIdConnect:Authority");
+                    opt.Authority = authority;
                     opt.RequireHttpsMetadata = false;
                     opt.ResponseType = OpenIdConnectResponseType.Code;
                     opt.GetClaimsFromUserInfoEndpoint = true;
                     opt.SaveTokens = true;
+
+                    if(dicPublicAuthorities != null)
+                    {
+                        var validIssuers = dicPublicAuthorities.Select(x => x.Value).Distinct().ToList();
+                        
+                        if(!validIssuers.Contains(authority))
+                            validIssuers.Add(authority);
+
+                        opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                        {
+                            ValidIssuers = validIssuers,
+                        };
+                    }
 
                     // --- Fix pour pb de cookie non créé par Chrome (https://stackoverflow.com/a/60668367)
                     opt.NonceCookie.SameSite = SameSiteMode.Unspecified;
                     opt.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
                     // --- fin fix
 
-                    opt.Events = new OpenIdConnectEvents
+                    // --- Fix pour pb certificat invalide
+                    var allowInvalidSSLCert = Configuration.GetValue<bool>("OpenIdConnect:AllowInvalidAuthoritySSLCertificate");
+                    
+                    if(allowInvalidSSLCert)
                     {
-                        OnRedirectToIdentityProvider = redirectContext =>
+                        var httpHandler = new System.Net.Http.HttpClientHandler();
+                        httpHandler.ServerCertificateCustomValidationCallback = System.Net.Http.HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                        opt.BackchannelHttpHandler = httpHandler;
+                    }
+                    // --- fin fix
+
+                    // --- gestion des alias publics d'Authority en fonction de l'appelant
+                    // NE FONCTIONNE PAS BIEN : Retourne un 401 après la redirection pour le login
+                    if(dicPublicAuthorities.Count() > 0)
+                    {
+                        opt.Events = new OpenIdConnectEvents
                         {
-                            /*
-                            //if (!_env.IsEnvironment("Debug"))
+                            OnTokenValidated = context => 
                             {
-                                //Force scheme of redirect URI (THE IMPORTANT PART)
-                                redirectContext.ProtocolMessage.RedirectUri = redirectContext.ProtocolMessage.RedirectUri.Replace("http://", "https://", StringComparison.OrdinalIgnoreCase);
-                            }*/
-                            return Task.FromResult(0);
-                        }
-                    };
+                                if(dicPublicAuthorities.ContainsKey(context.Request.Host.Value))
+                                {
+                                    var issuer = dicPublicAuthorities[context.Request.Host.Value];
+                                    //_logger.LogInformation($"OnRedirectToIdentityProvider : Issuer replaced. Before = {redirectContext.ProtocolMessage.IssuerAddress}, After = {issuer}");                                    
+
+                                    context.ProtocolMessage.IssuerAddress = context.ProtocolMessage.IssuerAddress.Replace(issuer, authority);
+                                }
+                                return Task.FromResult(0);
+                            },
+                            OnRedirectToIdentityProvider = redirectContext =>
+                            {
+                                //_logger.LogInformation($"OnRedirectToIdentityProvider : Host detected = {redirectContext.Request.Host.Value}");
+                                if(dicPublicAuthorities.ContainsKey(redirectContext.Request.Host.Value))
+                                {
+                                    var issuer = dicPublicAuthorities[redirectContext.Request.Host.Value];
+                                    //_logger.LogInformation($"OnRedirectToIdentityProvider : Issuer replaced. Before = {redirectContext.ProtocolMessage.IssuerAddress}, After = {issuer}");                                    
+
+                                    redirectContext.ProtocolMessage.IssuerAddress = redirectContext.ProtocolMessage.IssuerAddress.Replace(authority, issuer);
+                                }
+                                return Task.FromResult(0);
+                            },
+                            OnAuthenticationFailed = context => 
+                            {
+                                return Task.FromResult(0);
+                            },
+                            OnTokenResponseReceived = context => 
+                            {
+                                return Task.FromResult(0);
+                            },
+                            OnAuthorizationCodeReceived = context => 
+                            {
+                                return Task.FromResult(0);
+                            },
+                            OnTicketReceived = context => 
+                            {
+                                return Task.FromResult(0);
+                            },
+                        };
+                    }
 
                 });
 
