@@ -12,7 +12,15 @@
     {
       "ClientId":"",
       "ClientSecret": "",
-      "Authority":""
+      "Authority":"",
+      "AllowInvalidAuthoritySSLCertificate": false,
+      "PublicAuthorityAliases":
+      [
+        {
+          "Host": "",
+          "Authority": ""
+        }
+      ]
     }
   },
   "CookieExpiration" : 15,
