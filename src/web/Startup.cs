@@ -186,6 +186,8 @@ namespace web
             Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true; 
             
             //app.UseHttpsRedirection();
+            app.UseForwardedHeaders();
+
             app.UseStaticFiles();
 
             app.UseRequestLocalization();
