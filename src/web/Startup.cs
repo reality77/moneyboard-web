@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -63,7 +64,7 @@ namespace web
                     opt.ClientId = Configuration.GetValue<string>("OpenIdConnect:ClientId");
                     opt.ClientSecret = Configuration.GetValue<string>("OpenIdConnect:ClientSecret");
                     opt.Authority = authority;
-                    opt.RequireHttpsMetadata = false;
+                    opt.RequireHttpsMetadata = true;
                     opt.ResponseType = OpenIdConnectResponseType.Code;
                     opt.GetClaimsFromUserInfoEndpoint = true;
                     opt.SaveTokens = true;
@@ -162,8 +163,10 @@ namespace web
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.ForwardedHeaders = ForwardedHeaders.All;
+
+                foreach (var proxy in Configuration.GetSection("KnownProxies").AsEnumerable().Where(c => c.Value != null))
+                    options.KnownProxies.Add(IPAddress.Parse(proxy.Value));
             });
         }
 
@@ -188,6 +191,7 @@ namespace web
             //app.UseHttpsRedirection();
             app.UseForwardedHeaders();
 
+
             app.UseStaticFiles();
 
             app.UseRequestLocalization();
@@ -199,6 +203,18 @@ namespace web
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/debug/request", async context => 
+                {
+                    await context.Response.WriteAsync($"RemoteIpAddress={context.Connection.RemoteIpAddress}{Environment.NewLine}");
+                    await context.Response.WriteAsync($"RemotePort={context.Connection.RemotePort}{Environment.NewLine}");
+                    await context.Response.WriteAsync($"Scheme={context.Request.Scheme}{Environment.NewLine}");
+                    await context.Response.WriteAsync($"Host={context.Request.Host}{Environment.NewLine}");
+
+                    await context.Response.WriteAsync($"------------- Headers ------------- {Environment.NewLine}");
+                    foreach(var hdr in context.Request.Headers)
+                        await context.Response.WriteAsync($"{hdr.Key}={hdr.Value.ToString()}{Environment.NewLine}");
+                });
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

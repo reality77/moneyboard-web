@@ -24,5 +24,9 @@
     }
   },
   "CookieExpiration" : 15,
-  "AllowedHosts": "*"
+  "AllowedHosts": "*",
+  "KnownProxies":
+  [
+    "127.0.0.1"
+  ]
 }
