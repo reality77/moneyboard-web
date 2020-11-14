@@ -1,0 +1,37 @@
+@using web.Utils
+
+@model TagListModel
+
+@{
+    ViewData["Title"] = $"Tous les tags de type {Model.TagType}";
+}
+
+@section Stylesheets
+{
+}
+
+<h2>Tous les tiers @Model.TagType</h2>
+<span class="little">@Model.TagType</span>
+
+<div class="row">
+    <div class="col-12">
+        <div class="table100">
+            <div class="table-row">
+                <div class="table-cell table-header">Tiers</div>
+            </div>
+
+        @foreach(var tag in Model.Tags)
+        {
+            <div class="table-row">
+                <div class="table-cell"><a asp-controller="Tags" asp-action="Details" asp-route-tagType="@Model.TagType" asp-route-tagKey="@tag.Key">@tag.Key</a></div>
+                <div class="table-cell">@tag.Caption</div>
+            </div>
+        }
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+}

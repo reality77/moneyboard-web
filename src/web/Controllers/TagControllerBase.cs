@@ -22,6 +22,17 @@ namespace web.Controllers
             _api = api;
         }
 
+        protected async Task<IActionResult> ListInternalAsync(string tagType, string viewName = "TagList")
+        {
+            var list = await _api.GetAsync<IEnumerable<dto.Model.Tag>>($"tags/{tagType.ToCleanQuery()}");
+
+            return View(viewName, new TagListModel
+            {
+                TagType = tagType,
+                Tags = list.OrderBy(t => t.Key),
+            });
+        }
+
         protected async Task<IActionResult> DetailsInternalAsync<T>(string tagType, string tag, string viewName = "TagDetails") where T : TagModel, new()
         {
             var details = await _api.GetAsync<dto.Model.Tag>($"tags/{tagType.ToCleanQuery()}/{tag.ToCleanQuery()}");
