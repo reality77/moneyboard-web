@@ -8,56 +8,59 @@
 <h2>Transaction @Model.Caption</h2>
 <span class="little">@Model.Id</span>
 
-<form asp-controller="Transactions" asp-action="PostDetails" asp-route-id="@Model.Id" method="post">
-    <div>
-        <label for="date">Date</label>
-        <input id="date" asp-for="Date" /> 
-    </div>
-    <div>
-        <label for="user_date">Date utilisateur</label>
-        <input id="user_date" asp-for="UserDate" /> 
-    </div>
-    <div>
-        <label for="caption">Libellé</label>
-        <input id="caption" asp-for="Caption" /> 
-    </div>
-    <div>
-        <label for="comment">Commentaire</label>
-        <input id="comment" asp-for="Comment" /> 
-    </div>
-    <div>
-        <label>Montant</label>
-        <span>@Model.Amount</span>
-    </div>
-    <div>
-        <label>Import hash</label>
-        <span>@Model.ImportHash</span>
-    </div>
-    <div>
-        <label>Import caption</label>
-        <span>@Model.ImportCaption</span>
-    </div>
-    <div>
-        <label>Import comment</label>
-        <span>@Model.ImportComment</span>
-    </div>
-    <div>
-        <label>Import number</label>
-        <span>@Model.ImportNumber</span>
-    </div>
-    <div>
-        <label>Import file ID</label>
-        <span>@Model.ImportFileId</span>
-    </div>
-
-    <input type="submit" />
-</form>
-
 <div class="row">
-@foreach(var tag in Model.TransactionTags)
-{
-    <span class="tag">@tag.TagTypeKey - @tag.TagKey : @tag.TagCaption</span>
-}
+    <div class="col-12 col-md-6">
+        <h3>Modifier la transaction</h3>
+        <form asp-controller="Transactions" asp-action="PostDetails" asp-route-id="@Model.Id" method="post">
+            <div>
+                <label for="date">Date</label>
+                <input id="date" asp-for="Date" />
+            </div>
+            <div>
+                <label for="user_date">Date utilisateur</label>
+                <input id="user_date" asp-for="UserDate" />
+            </div>
+            <div>
+                <label for="caption">Libellé</label>
+                <input id="caption" asp-for="Caption" />
+            </div>
+            <div>
+                <label for="comment">Commentaire</label>
+                <input id="comment" asp-for="Comment" />
+            </div>
+            <div>
+                <label>Montant</label>
+                <span>@Model.Amount</span>
+            </div>
+            <div>
+                <label>Import hash</label>
+                <span>@Model.ImportHash</span>
+            </div>
+            <div>
+                <label>Import caption</label>
+                <span>@Model.ImportCaption</span>
+            </div>
+            <div>
+                <label>Import comment</label>
+                <span>@Model.ImportComment</span>
+            </div>
+            <div>
+                <label>Import number</label>
+                <span>@Model.ImportNumber</span>
+            </div>
+            <div>
+                <label>Import file ID</label>
+                <span>@Model.ImportFileId</span>
+            </div>
 
+            <input type="submit" />
+        </form>
+    </div>
+    <div class="col-12 col-md-6">
+        <h3>Gérer les tags</h3>
+        @foreach (var tag in Model.TransactionTags)
+        {
+            <span class="tag">@tag.TagTypeKey - @tag.TagKey : @tag.TagCaption</span>
+        }
+    </div>
 </div>
-
