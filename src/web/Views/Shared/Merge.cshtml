@@ -1,0 +1,31 @@
+@using web.Utils
+
+@model MergeTagModel
+@{
+    ViewData["Title"] = $"Fusion du tiers {Model.SourceTag.Caption}";
+}
+
+<h2>Fusionner @Model.SourceTag.TypeKey @Model.SourceTag.Caption</h2>
+<span class="little">@Model.SourceTag.Key</span>
+
+<p>
+    Ce tag va être supprimé et les transactions associées à celui-ci seront associées au tag de destination.
+    De plus, une règle sera créée afin que les nouvelles transactions seront directement associées au tag de destination.
+</p>
+
+
+<div class="row">
+    <div class="col-12">
+        <form asp-controller="Tags" asp-action="PostMerge" asp-route-tagType="@Model.SourceTag.TypeKey" asp-route-tagKey="@Model.SourceTag.Key" method="post">
+            <div>
+                <label for="date">Choix du tag de destination</label>
+                <select asp-for="TargetTagKey" asp-items="@Model.TargetTagList">
+                    <option value="">-- Sélectionner --</option>
+                </select>
+            </div>
+
+            <input type="submit" />
+
+        </form>
+    </div>
+</div>

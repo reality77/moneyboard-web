@@ -68,6 +68,28 @@ namespace web.Services
                 return result;
         }
 
+        public async Task PostAsync(string url, string jsonBody = null, string mediaType = "application/json") 
+        {
+            var content = (jsonBody != null) ? new StringContent(jsonBody, Encoding.UTF8, mediaType) : null;
+
+            await SetJwtTokenAsync();
+
+            var response = await _client.PostAsync(url, content);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"POST {url} => {response.StatusCode}");
+                throw new ApiClientException($"{response.StatusCode} : {await response.Content.ReadAsStringAsync()}");
+            }
+            else
+            {
+                if(_logger.IsEnabled(LogLevel.Debug))
+                {
+                    _logger.LogDebug($"POST {url} => {response.StatusCode}");
+                }
+            }
+        }
+
         public async Task<T> PostAsync<T, U>(string url, U body) where U : class
         {
             return await PostAsync<T>(url, JsonSerializer.Serialize<U>(body), "application/json");            

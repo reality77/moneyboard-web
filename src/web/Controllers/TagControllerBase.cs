@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using dto.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using web.Models;
 using web.Services;
@@ -77,6 +78,22 @@ namespace web.Controllers
             };
 
             return View(viewName, model);
+        }
+        
+        protected async Task<IActionResult> MergeAsync(string tagType, string tag)
+        {
+            var details = await _api.GetAsync<dto.Model.Tag>($"tags/{tagType.ToCleanQuery()}/{tag.ToCleanQuery()}");
+            var listTags = await _api.GetAsync<IEnumerable<dto.Model.Tag>>($"tags/{tagType.ToCleanQuery()}");
+
+            listTags = listTags
+                .Where(t => t.Key != tag)
+                .OrderBy(t => t.Caption);
+
+            return View("Merge", new MergeTagModel
+            {
+                SourceTag = details,
+                TargetTagList = listTags.Select(t => new SelectListItem { Value = t.Key, Text = t.Caption }),
+            });
         }
     }
 }
