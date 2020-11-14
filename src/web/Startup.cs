@@ -109,7 +109,7 @@ namespace web
                                 if(dicPublicAuthorities.ContainsKey(context.Request.Host.Value))
                                 {
                                     var issuer = dicPublicAuthorities[context.Request.Host.Value];
-                                    //_logger.LogInformation($"OnRedirectToIdentityProvider : Issuer replaced. Before = {redirectContext.ProtocolMessage.IssuerAddress}, After = {issuer}");                                    
+                                    //_logger.LogInformation($"OnTokenValidated : Issuer replaced. Before = {redirectContext.ProtocolMessage.IssuerAddress}, After = {issuer}");                                    
 
                                     context.ProtocolMessage.IssuerAddress = context.ProtocolMessage.IssuerAddress.Replace(issuer, authority);
                                 }

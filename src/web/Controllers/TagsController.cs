@@ -22,9 +22,18 @@ namespace web.Controllers
         {
         }
 
+        [Route("{tagType}")]
+        public async Task<IActionResult> List(string tagType)
+        {
+            return await base.ListInternalAsync(tagType);
+        }
+
         [Route("{tagType}/{tagKey}")]
         public async Task<IActionResult> Details(string tagType, string tagKey)
         {
+            if(tagType == "payee")
+                return RedirectToAction("Details", "Payees", new { key = tagKey });
+
             return await base.DetailsInternalAsync<TagModel>(tagType, tagKey);
         }
     }

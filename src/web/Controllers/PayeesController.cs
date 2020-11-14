@@ -21,7 +21,7 @@ namespace web.Controllers
         : base(logger, api)
         {
         }
-
+        
         [Route("{key}")]
         public async Task<IActionResult> Details(string key)
         {
