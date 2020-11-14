@@ -54,9 +54,9 @@
 </form>
 
 <div class="row">
-@foreach(var tag in Model.Tags)
+@foreach(var tag in Model.TransactionTags)
 {
-    <span class="tag">@tag.TypeKey - @tag.Key : @tag.Caption</span>
+    <span class="tag">@tag.TagTypeKey - @tag.TagKey : @tag.TagCaption</span>
 }
 
 </div>
