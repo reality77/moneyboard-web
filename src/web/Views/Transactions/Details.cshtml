@@ -13,6 +13,10 @@
         <h3>Modifier la transaction</h3>
         <form asp-controller="Transactions" asp-action="PostDetails" asp-route-id="@Model.Id" method="post">
             <div>
+                <label>Type</label>
+                <span>@Model.Type</span>
+            </div>
+            <div>
                 <label for="date">Date</label>
                 <input id="date" asp-for="Date" />
             </div>
@@ -60,7 +64,60 @@
         <h3>Gérer les tags</h3>
         @foreach (var tag in Model.TransactionTags)
         {
-            <span class="tag">@tag.TagTypeKey - @tag.TagKey : @tag.TagCaption</span>
+            <div class="tag">
+                <span>@tag.TagTypeKey - @tag.TagKey : @tag.TagCaption</span>
+                @if(tag.IsManual) {
+                    <button onclick="removeTransactionTag(this, @Model.Id, '@tag.TagTypeKey', '@tag.TagKey')">x</button>
+                }
+            </div>
         }
+
+        <div>
+            <form asp-controller="Transactions" asp-action="AddTag" asp-route-id="@Model.Id" method="post">
+                <span>Nouveau tag :</span>
+                <label for="new-tag-type">Type</label>
+                <select id="new-tag-type" name="TypeKey" asp-items="@(IEnumerable<SelectListItem>)ViewBag.AllTagTypes" onchange="refreshTagKeys()">
+                    <option value="">-- Sélectionner --</option>
+                </select>
+                <div id="partial-tag-key">
+                    <!-- dynamique -->
+                </div>
+                <button type="submit">Ajouter</button>
+            </form>
+        </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script lang="javascript">
+    
+    function removeTransactionTag(source, transactionId, tagTypeKey, tagKey) {
+        $div = $(source).closest('.tag');
+
+        var tagData = {"TypeKey":tagTypeKey, "Key":tagKey};
+
+        $.ajax({
+            url: '/transactions/' + transactionId + '/tag/remove',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(tagData),
+            success: function(result) {
+                $div.remove();
+            },
+            error: function(request,status,errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    }
+
+    function refreshTagKeys() {
+        var typeKey = $("#new-tag-type option:selected").val();
+
+        $('#partial-tag-key').load('/tags/' + typeKey + '/select', function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
+    }
+
+    </script>
+}

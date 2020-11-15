@@ -182,6 +182,26 @@ namespace web.Services
             }
         }
 
+        public async Task DeleteAsync(string url) 
+        {
+            await SetJwtTokenAsync();
+
+            var response = await _client.DeleteAsync(url);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"DELETE {url} => {response.StatusCode}");
+                throw new ApiClientException($"{response.StatusCode} : {await response.Content.ReadAsStringAsync()}");
+            }
+            else
+            {
+                if(_logger.IsEnabled(LogLevel.Debug))
+                {
+                    _logger.LogDebug($"PUT {url} => {response.StatusCode}");
+                }
+            }
+        }
+
         private async Task SetJwtTokenAsync()
         {
             var token = await _httpcontextAccessor.HttpContext.GetTokenAsync("access_token");
