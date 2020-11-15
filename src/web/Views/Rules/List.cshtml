@@ -1,0 +1,61 @@
+@using web.Utils
+
+@model IEnumerable<dto.Model.TransactionRecognitionRule>
+
+@{
+    ViewData["Title"] = $"Règles de reconnaissance";
+}
+
+@section Stylesheets
+{
+}
+
+<h2>Règle de reconnaissance de transactions</h2>
+
+<div>
+    <a asp-controller="Rules" asp-action="Create">Créer</a>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="table100">
+            <div class="table-row">
+                <div class="table-cell table-header">Règle</div>
+                <div class="table-cell table-header">Conditions</div>
+                <div class="table-cell table-header">Actions</div>
+            </div>
+
+        @foreach(var rule in Model)
+        {
+            <div class="table-row">
+                <div class="table-cell"><a asp-controller="Rules" asp-action="Details" asp-route-id="@rule.Id">@rule.Id</a></div>
+                <div class="table-cell">
+                    <div class="table100">
+                    @foreach(var condition in rule.Conditions)
+                    {
+                        <div class="table-row">
+                            <div class="table-cell">@condition.FieldType @condition.FieldName @condition.ValueOperator <strong>@condition.Value</strong></div>
+                        </div>
+                    }
+                    </div>
+                </div>
+                <div class="table-cell">
+                    <div class="table100">
+                    @foreach(var action in rule.Actions)
+                    {
+                        <div class="table-row">
+                            <div class="table-cell">@action.Type @action.Field = <strong>@action.Value</strong></div>
+                        </div>
+                    }
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+}

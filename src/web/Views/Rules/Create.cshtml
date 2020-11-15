@@ -1,0 +1,68 @@
+@using web.Utils
+
+@model dto.Model.TransactionRecognitionRule
+
+@{
+    ViewData["Title"] = $"Créer une règle de reconnaissance";
+}
+
+@section Stylesheets
+{
+}
+
+<h2>Créer une règle de reconnaissance de transactions</h2>
+
+<div>
+    <a asp-controller="Rules" asp-action="List">Retour</a>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="table100">
+            <div class="table-row">
+                <div class="table-cell table-header">Conditions</div>
+                <div class="table-cell table-header">Actions</div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell">
+                    <div class="table100">
+                    @for(int ic = 0; ic < Model.Conditions.Count(); ic++)
+                    {
+                        var condition = Model.Conditions.ElementAt(ic);
+                        <div class="table-cell">
+                            Ic = @ic
+                        </div>
+
+                        <div class="table-row">
+                            <div class="table-cell">
+                                <select asp-for="Conditions.ElementAt(ic).FieldType">
+                                    <option value="0">Data field</option>
+                                    <option value="1">Tag</option>
+                                </select>
+                                <input type="text" asp-for="Conditions.ElementAt(ic).FieldName" />
+                                @* @condition.FieldType @condition.FieldName @condition.ValueOperator <strong>@condition.Value</strong> *@
+                            </div>
+                        </div>
+                    }
+                    </div>
+                </div>
+                @*<div class="table-cell">
+                    <div class="table100">
+                    @foreach(var action in rule.Actions)
+                    {
+                        <div class="table-row">
+                            <div class="table-cell">@action.Type @action.Field = <strong>@action.Value</strong></div>
+                        </div>
+                    }
+                    </div>
+                </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+}
