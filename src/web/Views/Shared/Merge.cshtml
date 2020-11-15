@@ -18,8 +18,8 @@
     <div class="col-12">
         <form asp-controller="Tags" asp-action="PostMerge" asp-route-tagType="@Model.SourceTag.TypeKey" asp-route-tagKey="@Model.SourceTag.Key" method="post">
             <div>
-                <label for="date">Choix du tag de destination</label>
-                <select asp-for="TargetTagKey" asp-items="@Model.TargetTagList">
+                <label for="target-tag">Choix du tag de destination</label>
+                <select id="target-tag" asp-for="TargetTagKey" asp-items="@Model.TargetTagList">
                     <option value="">-- Sélectionner --</option>
                 </select>
             </div>

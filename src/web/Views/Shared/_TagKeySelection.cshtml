@@ -1,0 +1,11 @@
+@using web.Utils
+@using System.Linq
+@model IEnumerable<dto.Model.Tag>
+
+<label for="new-tag-key">Identifiant</label>
+<select id="new-tag-key" name="Key">
+@foreach(var tag in Model)
+{
+    <option value="@tag.Key">@tag.Key - @tag.Caption</option>
+}
+</select>

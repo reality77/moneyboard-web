@@ -28,6 +28,13 @@ namespace web.Controllers
             return await base.ListInternalAsync(tagType);
         }
 
+        [Route("{tagType}/select")]
+        public async Task<IActionResult> PartialListForSelect(string tagType)
+        {
+            var model = await _api.GetAsync<IEnumerable<dto.Model.Tag>>($"tags/{tagType.ToCleanQuery()}");
+            return PartialView("_TagKeySelection", model);
+        }
+
         [Route("{tagType}/{tagKey}")]
         public async Task<IActionResult> Details(string tagType, string tagKey)
         {
