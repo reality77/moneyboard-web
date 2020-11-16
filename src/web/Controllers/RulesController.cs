@@ -44,24 +44,51 @@ namespace web.Controllers
         }
 
         
-        [Route("create")]
+        [HttpGet("create")]
         public async Task<IActionResult> Create(string filterTagTypeKey = null, string filterTagKey = null)
         {
             var rule = new dto.Model.TransactionRecognitionRule();
 
             var list = new List<TransactionRecognitionRuleCondition>();
 
+            ViewBag.AllTagsTypes = await _api.GetAsync<IEnumerable<dto.Model.TagType>>("tagtypes");
+
             list.Add(new TransactionRecognitionRuleCondition
             {
                 FieldType = dto.ERecognitionRuleConditionFieldType.Tag,
-                FieldName = "test",
-                ValueOperator = dto.ERecognitionRuleConditionOperator.Greater,
-                Value = "150"
+                FieldName = "payee",
+                ValueOperator = dto.ERecognitionRuleConditionOperator.Equals,
+                Value = ""
             });
+
+            list.Add(new TransactionRecognitionRuleCondition
+            {
+                FieldType = dto.ERecognitionRuleConditionFieldType.Tag,
+                FieldName = "category",
+                ValueOperator = dto.ERecognitionRuleConditionOperator.Equals,
+                Value = "test"
+            });
+
 
             rule.Conditions = list;
 
             return View(rule);
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> PostCreate(dto.Model.TransactionRecognitionRule rule)
+        {
+            var list = new List<TransactionRecognitionRuleCondition>();
+
+            _logger.LogInformation($"UseOrConditions : {rule.UseOrConditions}");
+
+            foreach(var cond in rule.Conditions)
+                _logger.LogInformation($"Condition {cond.FieldType}/{cond.FieldName} {cond.ValueOperator} {cond.Value}");
+
+            foreach(var action in rule.Actions)
+                _logger.LogInformation($"Action {action.Type}/{action.Field} => {action.Value}");
+
+            return RedirectToAction("List");
         }
     }
 }

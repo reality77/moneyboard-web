@@ -18,47 +18,63 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="table100">
-            <div class="table-row">
-                <div class="table-cell table-header">Conditions</div>
-                <div class="table-cell table-header">Actions</div>
-            </div>
-
-            <div class="table-row">
-                <div class="table-cell">
-                    <div class="table100">
-                    @for(int ic = 0; ic < Model.Conditions.Count(); ic++)
-                    {
-                        var condition = Model.Conditions.ElementAt(ic);
-                        <div class="table-cell">
-                            Ic = @ic
-                        </div>
-
-                        <div class="table-row">
-                            <div class="table-cell">
-                                <select asp-for="Conditions.ElementAt(ic).FieldType">
-                                    <option value="0">Data field</option>
-                                    <option value="1">Tag</option>
-                                </select>
-                                <input type="text" asp-for="Conditions.ElementAt(ic).FieldName" />
-                                @* @condition.FieldType @condition.FieldName @condition.ValueOperator <strong>@condition.Value</strong> *@
-                            </div>
-                        </div>
-                    }
-                    </div>
+        <form asp-action="PostCreate" method="POST">
+            <div class="table100">
+                <div class="table-row">
+                    <div class="table-cell table-header">Conditions</div>
+                    <div class="table-cell table-header">Actions</div>
                 </div>
-                @*<div class="table-cell">
-                    <div class="table100">
-                    @foreach(var action in rule.Actions)
-                    {
-                        <div class="table-row">
-                            <div class="table-cell">@action.Type @action.Field = <strong>@action.Value</strong></div>
+
+                <div class="table-row">
+                    <div class="table-cell">
+                        <div class="table100">
+                        @for(int ic = 0; ic < Model.Conditions.Count(); ic++)
+                        {
+                            var condition = Model.Conditions.ElementAt(ic);
+                            <div class="table-cell">
+                                @(ic + 1)
+                            </div>
+
+                            <div class="table-row">
+                                <div class="table-cell">
+                                    <select asp-for="Conditions.ElementAt(ic).FieldType" name="Conditions[@ic].FieldType">
+                                        <option value="0">Data field</option>
+                                        <option value="1">Tag</option>
+                                    </select>
+                                    <input type="text" asp-for="Conditions.ElementAt(ic).FieldName" name="Conditions[@ic].FieldName" />
+                                    <input type="text" asp-for="Conditions.ElementAt(ic).ValueOperator" name="Conditions[@ic].ValueOperator" />
+                                    <input type="text" asp-for="Conditions.ElementAt(ic).Value" name="Conditions[@ic].Value" />
+                                </div>
+                            </div>
+                        }
                         </div>
-                    }
                     </div>
-                </div>*@
+                    <div class="table-cell">
+                        <div class="table100">
+                        @for(int ia = 0; ia < Model.Actions.Count(); ia++)
+                        {
+                            var condition = Model.Actions.ElementAt(ia);
+                            <div class="table-cell">
+                                @(ia + 1)
+                            </div>
+
+                            <div class="table-row">
+                                <div class="table-cell">
+                                    <select asp-for="Actions.ElementAt(ia).Type" name="Actions[@ia].Type">
+                                        <option value="0">Add tag</option>
+                                        <option value="1">Set data</option>
+                                    </select>
+                                    <input type="text" asp-for="Actions.ElementAt(ia).Field" name="Actions[@ia].Field" />
+                                    <input type="text" asp-for="Actions.ElementAt(ia).Value" name="Actions[@ia].Value" />
+                                </div>
+                            </div>
+                        }
+                        </div>
+                    </div>                
+                </div>
             </div>
-        </div>
+            <button type="submit">Créer</button>
+        </form>
     </div>
 </div>
 
