@@ -44,11 +44,12 @@
                                     </select>
                                 </div>
                                 <div class="table-cell fieldname">
-                                   
+                                   @* automatique *@
                                 </div>
-                                <div>
-                                    <input type="text" asp-for="Conditions.ElementAt(ic).FieldName" name="Conditions[@ic].FieldName" />
-                                    <input type="text" asp-for="Conditions.ElementAt(ic).ValueOperator" name="Conditions[@ic].ValueOperator" />
+                                <div class="table-cell valueoperator">
+                                   @* automatique *@
+                                </div>                                
+                                <div class="table-cell value">
                                     <input type="text" asp-for="Conditions.ElementAt(ic).Value" name="Conditions[@ic].Value" />
                                 </div>
                             </div>
@@ -104,7 +105,7 @@
 
     function refreshConditionsFieldType(conditionIndex) {
         var rowAccessor = "#rowConditions_"+conditionIndex;
-        var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldType"] option[selected]').val();
+        var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldType"] option:selected').val();
         var url = "";
 
         if(fieldType == "1") {
@@ -119,15 +120,19 @@
     }
 
     function onConditionsFieldNameChanged(source, conditionIndex) {
-        //refreshConditionsFieldName(conditionIndex);
+        refreshConditionsFieldName(conditionIndex);
     }
 
     function refreshConditionsFieldName(conditionIndex) {
-        /*var rowAccessor = "#rowConditions_"+conditionIndex;
+        var rowAccessor = "#rowConditions_"+conditionIndex;
+        var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldName"] option:selected').val();
+        var url = "";
 
-        $(rowAccessor + ' .fieldname').load('/rules/selecttagtypes?mode=Conditions&field=FieldName&index=' + conditionIndex, function(responseText, textStatus, jqXHR ) {
+        url = '/rules/selectvalueoperator?mode=Conditions&field=ValueOperator&index=' + conditionIndex;
+
+        $(rowAccessor + ' .valueoperator').load(url, function(responseText, textStatus, jqXHR ) {
             //alert(textStatus);
-        });*/
+        });
     }
 
 </script>

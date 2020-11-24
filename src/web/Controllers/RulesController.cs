@@ -11,6 +11,7 @@ using web.Models;
 using web.Services;
 using web.Utils;
 using web.Models.Rules;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace web.Controllers
 {
@@ -76,13 +77,13 @@ namespace web.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> PostCreate(dto.Model.TransactionRecognitionRule rule)
         {
-            _logger.LogInformation($"UseOrConditions : {rule.UseOrConditions}");
+            _logger.LogWarning($"UseOrConditions : {rule.UseOrConditions}");
 
             foreach(var cond in rule.Conditions)
-                _logger.LogInformation($"Condition {cond.FieldType}/{cond.FieldName} {cond.ValueOperator} {cond.Value}");
+                _logger.LogWarning($"Condition {cond.FieldType}/{cond.FieldName} {cond.ValueOperator} {cond.Value}");
 
             foreach(var action in rule.Actions)
-                _logger.LogInformation($"Action {action.Type}/{action.Field} => {action.Value}");
+                _logger.LogWarning($"Action {action.Type}/{action.Field} => {action.Value}");
 
             return View(rule); // pour debug
         }
@@ -96,15 +97,74 @@ namespace web.Controllers
         [HttpGet("selecttagtypes")]
         public async Task<IActionResult> PartialSelectTagTypes(TargetMode mode, string field, int index)
         {
-            var model = new SelectTagTypeModel
+            var model = new RulesSelectModel
             {
                 HtmlFieldId = $"{mode}_{index}_{field}",      // Exemple : Conditions_0_FieldType
                 HtmlFieldName = $"{mode}[{index}].{field}",   // Exemple : Conditions[0].FieldType
                 OnChangeScript = $"on{mode}{field}Changed(this, {index});", // Exemple : onConditionFieldTypeChanged(this, 0);
-                AllTagTypes = (await _api.GetAsync<IEnumerable<dto.Model.TagType>>("tagtypes")).OrderBy(tt => tt.Key),
+                ListItems = (await _api.GetAsync<IEnumerable<dto.Model.TagType>>("tagtypes")).OrderBy(tt => tt.Key).Select(tt => new SelectListItem
+                {
+                    Value = tt.Key,
+                    Text = tt.Caption ?? tt.Key,
+                }),
             };
 
-            return PartialView("_PartialSelectTagTypes", model);
+            return PartialView("_PartialSelectRules", model);
         }
+
+
+        /// <summary>
+        /// Génère un champ select pour proposer le choix d'un champ
+        /// </summary>
+        /// <param name="mode">Conditions ou Actions</param>
+        /// <param name="index">Index de la condition ou de l'action</param>
+        /// <returns></returns>
+        [HttpGet("selectfields")]
+        public IActionResult PartialSelectFields(TargetMode mode, string field, int index)
+        {
+            Type type = typeof(ImportedTransaction);
+            var properties = type.GetProperties().AsEnumerable().OrderBy(p => p.Name);
+
+            var model = new RulesSelectModel
+            {
+                HtmlFieldId = $"{mode}_{index}_{field}",      // Exemple : Conditions_0_FieldType
+                HtmlFieldName = $"{mode}[{index}].{field}",   // Exemple : Conditions[0].FieldType
+                OnChangeScript = $"on{mode}{field}Changed(this, {index});", // Exemple : onConditionFieldTypeChanged(this, 0);
+                ListItems = properties.Select(p => new SelectListItem
+                {
+                    Value = p.Name,
+                    Text = p.Name,
+                    Selected = (p.Name == "ImportCaption"),
+                }),
+            };
+
+            return PartialView("_PartialSelectRules", model);
+        }
+
+        /// <summary>
+        /// Génère un champ select pour proposer le choix d'un opérateur
+        /// </summary>
+        /// <param name="mode">Conditions ou Actions</param>
+        /// <param name="index">Index de la condition ou de l'action</param>
+        /// <returns></returns>
+        [HttpGet("selectvalueoperator")]
+        public IActionResult PartialSelectValueOperator(TargetMode mode, string field, int index)
+        {
+            var values = Enum.GetNames(typeof(dto.ERecognitionRuleConditionOperator)).AsEnumerable().OrderBy(n => n);
+
+            var model = new RulesSelectModel
+            {
+                HtmlFieldId = $"{mode}_{index}_{field}",      // Exemple : Conditions_0_FieldType
+                HtmlFieldName = $"{mode}[{index}].{field}",   // Exemple : Conditions[0].FieldType
+                OnChangeScript = null, // $"on{mode}{field}Changed(this, {index});", // Exemple : onConditionFieldTypeChanged(this, 0);
+                ListItems = values.Select(n => new SelectListItem
+                {
+                    Value = n,
+                    Text = n,
+                }),
+            };
+
+            return PartialView("_PartialSelectRules", model);
+        }        
     }
 }
