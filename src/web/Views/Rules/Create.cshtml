@@ -66,19 +66,26 @@
                         @for(int ia = 0; ia < Model.Actions.Count(); ia++)
                         {
                             var condition = Model.Actions.ElementAt(ia);
-                            <div class="table-cell">
-                                @(ia + 1)
-                            </div>
-
-                            <div class="table-row">
+                            var rowId = $"rowActions_{ia}";
+                            
+                            <div class="table-row" id="@rowId">
                                 <div class="table-cell">
-                                    <select asp-for="Actions.ElementAt(ia).Type" name="Actions[@ia].Type">
-                                        <option value="0">Add tag</option>
-                                        <option value="1">Set data</option>
+                                    @(ia + 1)
+                                </div>
+                                <div class="table-cell type">
+                                    <select asp-for="Actions.ElementAt(ia).Type" name="Actions[@ia].Type" onchange="onActionTypeChanged(this, @ia);">
+                                        <option value="0">Set data</option>
+                                        <option value="1">Add tag</option>
                                     </select>
+                                </div>
+                                <div class="table-cell field">
+                                    @* rafraichissement automatique *@
+                                </div>                                                                 
+                                <div class="table-cell">
                                     <input type="text" asp-for="Actions.ElementAt(ia).Field" name="Actions[@ia].Field" />
                                     <input type="text" asp-for="Actions.ElementAt(ia).Value" name="Actions[@ia].Value" />
                                 </div>
+
                             </div>
                         }
                         </div>
@@ -100,6 +107,13 @@
         {
         <text>
         refreshConditionsFieldType(@i, '@Model.Conditions.ElementAt(i).FieldName');
+        </text>
+        }
+
+        @for(int i = 0; i < Model.Actions.Count(); i++)
+        {
+        <text>
+        refreshActionsType(@i, '@Model.Actions.ElementAt(i).Field');
         </text>
         }
     });
@@ -138,6 +152,30 @@
         $(rowAccessor + ' .valueoperator').load(url, function(responseText, textStatus, jqXHR ) {
             //alert(textStatus);
         });
+    }
+
+    function onActionTypeChanged(source, actionIndex) {
+        refreshActionsType(actionIndex);
+    }
+
+    function refreshActionsType(actionIndex, value) {
+        var rowAccessor = "#rowActions_"+actionIndex;
+        var fieldType = $('select[name ="Actions['+actionIndex+'].Type"] option:selected').val();
+        var url = "";
+
+        if(fieldType == "1") {
+            url = '/rules/selecttagtypes?mode=Actions&field=Field&index=' + actionIndex + '&value=' + value;
+        } else {
+            url = '/rules/selectfields?mode=Actions&field=Field&index=' + actionIndex + '&value=' + value;
+        }
+
+        $(rowAccessor + ' .field').load(url, function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
+    }
+    
+    function onActionsFieldChanged(source, actionIndex) {
+        refreshActionsField(actionIndex);
     }
 
 </script>

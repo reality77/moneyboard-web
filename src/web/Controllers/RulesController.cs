@@ -57,11 +57,12 @@ namespace web.Controllers
         {
             var rule = new dto.Model.TransactionRecognitionRule();
 
-            var list = new List<TransactionRecognitionRuleCondition>();
+            var conditions = new List<TransactionRecognitionRuleCondition>();
+            var actions = new List<TransactionRecognitionRuleAction>();
 
             ViewBag.AllTagsTypes = await _api.GetAsync<IEnumerable<dto.Model.TagType>>("tagtypes");
 
-            list.Add(new TransactionRecognitionRuleCondition
+            conditions.Add(new TransactionRecognitionRuleCondition
             {
                 FieldType = dto.ERecognitionRuleConditionFieldType.Tag,
                 FieldName = "payee",
@@ -69,7 +70,15 @@ namespace web.Controllers
                 Value = ""
             });
 
-            rule.Conditions = list;
+            actions.Add(new TransactionRecognitionRuleAction
+            {
+                Type = dto.ERecognitionRuleActionType.AddTag,
+                Field = "category",
+                Value = "",
+            });
+
+            rule.Conditions = conditions;
+            rule.Actions = actions;
 
             return View(rule);
         }
