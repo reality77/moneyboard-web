@@ -1,0 +1,9 @@
+@using web.Utils
+
+@model web.Models.Rules.SelectTagTypeModel
+
+<select id="@Model.HtmlFieldId" name="@Model.HtmlFieldName" onchange="@Model.OnChangeScript">
+@foreach(var tagtype in Model.AllTagTypes) {
+    <option value="@tagtype.Key">@(tagtype.Caption ?? tagtype.Key)</option>
+}
+</select>

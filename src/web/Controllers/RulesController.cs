@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using web.Models;
 using web.Services;
 using web.Utils;
+using web.Models.Rules;
 
 namespace web.Controllers
 {
@@ -17,6 +18,12 @@ namespace web.Controllers
     [Authorize]
     public class RulesController : Controller
     {
+        public enum TargetMode
+        {
+            Conditions,
+            Actions,
+        }
+
         private readonly ILogger<RulesController> _logger;
         
         private readonly ApiClient _api;
@@ -56,19 +63,10 @@ namespace web.Controllers
             list.Add(new TransactionRecognitionRuleCondition
             {
                 FieldType = dto.ERecognitionRuleConditionFieldType.Tag,
-                FieldName = "payee",
+                FieldName = "",
                 ValueOperator = dto.ERecognitionRuleConditionOperator.Equals,
                 Value = ""
             });
-
-            list.Add(new TransactionRecognitionRuleCondition
-            {
-                FieldType = dto.ERecognitionRuleConditionFieldType.Tag,
-                FieldName = "category",
-                ValueOperator = dto.ERecognitionRuleConditionOperator.Equals,
-                Value = "test"
-            });
-
 
             rule.Conditions = list;
 
@@ -78,8 +76,6 @@ namespace web.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> PostCreate(dto.Model.TransactionRecognitionRule rule)
         {
-            var list = new List<TransactionRecognitionRuleCondition>();
-
             _logger.LogInformation($"UseOrConditions : {rule.UseOrConditions}");
 
             foreach(var cond in rule.Conditions)
@@ -88,7 +84,27 @@ namespace web.Controllers
             foreach(var action in rule.Actions)
                 _logger.LogInformation($"Action {action.Type}/{action.Field} => {action.Value}");
 
-            return RedirectToAction("List");
+            return View(rule); // pour debug
+        }
+
+        /// <summary>
+        /// Génère un champ select pour proposer le choix d'un type de tag
+        /// </summary>
+        /// <param name="mode">Conditions ou Actions</param>
+        /// <param name="index">Index de la condition ou de l'action</param>
+        /// <returns></returns>
+        [HttpGet("selecttagtypes")]
+        public async Task<IActionResult> PartialSelectTagTypes(TargetMode mode, string field, int index)
+        {
+            var model = new SelectTagTypeModel
+            {
+                HtmlFieldId = $"{mode}_{index}_{field}",      // Exemple : Conditions_0_FieldType
+                HtmlFieldName = $"{mode}[{index}].{field}",   // Exemple : Conditions[0].FieldType
+                OnChangeScript = $"on{mode}{field}Changed(this, {index});", // Exemple : onConditionFieldTypeChanged(this, 0);
+                AllTagTypes = (await _api.GetAsync<IEnumerable<dto.Model.TagType>>("tagtypes")).OrderBy(tt => tt.Key),
+            };
+
+            return PartialView("_PartialSelectTagTypes", model);
         }
     }
 }
