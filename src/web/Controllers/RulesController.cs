@@ -66,7 +66,7 @@ namespace web.Controllers
                 FieldType = dto.ERecognitionRuleConditionFieldType.Tag,
                 FieldName = "payee",
                 ValueOperator = dto.ERecognitionRuleConditionOperator.Equals,
-                Value = "test"
+                Value = ""
             });
 
             rule.Conditions = list;

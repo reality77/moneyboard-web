@@ -96,7 +96,12 @@
 <script lang="javascript">
 
     $(document).ready(function() {
-        refreshConditionsFieldType(0, '@Model.Conditions.ElementAt(0).FieldName');  // TODO : toutes les conditions (boucle avec data-conditions-count)
+        @for(int i = 0; i < Model.Conditions.Count(); i++)
+        {
+        <text>
+        refreshConditionsFieldType(@i, '@Model.Conditions.ElementAt(i).FieldName');
+        </text>
+        }
     });
 
     function onConditionFieldTypeChanged(source, conditionIndex) {
