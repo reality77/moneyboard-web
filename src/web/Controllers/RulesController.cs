@@ -64,9 +64,9 @@ namespace web.Controllers
             list.Add(new TransactionRecognitionRuleCondition
             {
                 FieldType = dto.ERecognitionRuleConditionFieldType.Tag,
-                FieldName = "",
+                FieldName = "payee",
                 ValueOperator = dto.ERecognitionRuleConditionOperator.Equals,
-                Value = ""
+                Value = "test"
             });
 
             rule.Conditions = list;
@@ -95,7 +95,7 @@ namespace web.Controllers
         /// <param name="index">Index de la condition ou de l'action</param>
         /// <returns></returns>
         [HttpGet("selecttagtypes")]
-        public async Task<IActionResult> PartialSelectTagTypes(TargetMode mode, string field, int index)
+        public async Task<IActionResult> PartialSelectTagTypes(TargetMode mode, string field, int index, string value = null)
         {
             var model = new RulesSelectModel
             {
@@ -106,6 +106,7 @@ namespace web.Controllers
                 {
                     Value = tt.Key,
                     Text = tt.Caption ?? tt.Key,
+                    Selected = (tt.Key == value),
                 }),
             };
 
@@ -120,7 +121,7 @@ namespace web.Controllers
         /// <param name="index">Index de la condition ou de l'action</param>
         /// <returns></returns>
         [HttpGet("selectfields")]
-        public IActionResult PartialSelectFields(TargetMode mode, string field, int index)
+        public IActionResult PartialSelectFields(TargetMode mode, string field, int index, string value = null)
         {
             Type type = typeof(ImportedTransaction);
             var properties = type.GetProperties().AsEnumerable().OrderBy(p => p.Name);
@@ -134,7 +135,7 @@ namespace web.Controllers
                 {
                     Value = p.Name,
                     Text = p.Name,
-                    Selected = (p.Name == "ImportCaption"),
+                    Selected = (p.Name == value),
                 }),
             };
 
@@ -148,7 +149,7 @@ namespace web.Controllers
         /// <param name="index">Index de la condition ou de l'action</param>
         /// <returns></returns>
         [HttpGet("selectvalueoperator")]
-        public IActionResult PartialSelectValueOperator(TargetMode mode, string field, int index)
+        public IActionResult PartialSelectValueOperator(TargetMode mode, string field, int index, string value = null)
         {
             var values = Enum.GetNames(typeof(dto.ERecognitionRuleConditionOperator)).AsEnumerable().OrderBy(n => n);
 
@@ -161,6 +162,7 @@ namespace web.Controllers
                 {
                     Value = n,
                     Text = n,
+                    Selected = (n == value),
                 }),
             };
 
