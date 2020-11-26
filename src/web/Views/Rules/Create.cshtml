@@ -62,12 +62,10 @@
                                 </div>
                                 <div class="table-cell field">
                                     @* rafraichissement automatique *@
-                                </div>                                                                 
-                                <div class="table-cell">
-                                    <input type="text" asp-for="Actions.ElementAt(ia).Field" name="Actions[@ia].Field" />
-                                    <input type="text" asp-for="Actions.ElementAt(ia).Value" name="Actions[@ia].Value" />
                                 </div>
-
+                                <div class="table-cell value">
+                                    @* rafraichissement automatique *@
+                                </div>
                             </div>
                         }
                         </div>
@@ -129,6 +127,10 @@
         var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldType"] option:selected').val();
         var url = "";
 
+        if(value == undefined) {
+            value = "";
+        }
+
         if(fieldType == "1") {
             url = '/rules/selecttagtypes?mode=Conditions&field=FieldName&index=' + conditionIndex + '&value=' + value;
         } else {
@@ -145,6 +147,10 @@
         var rowAccessor = "#rowConditions_"+conditionIndex;
         var url = "";
 
+        if(value == undefined) {
+            value = "";
+        }
+
         url = '/rules/selectvalueoperator?mode=Conditions&field=ValueOperator&index=' + conditionIndex + '&value=' + value;
 
         $(rowAccessor + ' .valueoperator').load(url, function(responseText, textStatus, jqXHR ) {
@@ -159,6 +165,10 @@
         var valueOperator = $('select[name ="Conditions['+conditionIndex+'].ValueOperator"] option:selected').val();
         var url = "";
 
+        if(value == undefined) {
+            value = "";
+        }
+
         if(fieldType == 1) {
             url = '/rules/selecttagvalue?mode=Conditions&field=Value&index=' + conditionIndex + '&tagType='+fieldName+'&value=' + value;
         } else {
@@ -171,10 +181,15 @@
     }
 
     function onActionTypeChanged(source, actionIndex) {
-        refreshActionsType(actionIndex);
+        displayActionsField(actionIndex);
+        displayActionsValue(actionIndex);
+    }
+    
+    function onActionsFieldChanged(source, actionIndex) {
+        displayActionsValue(actionIndex);
     }
 
-    function refreshActionsType(actionIndex, value) {
+    function displayActionsField(actionIndex, value) {
         var rowAccessor = "#rowActions_"+actionIndex;
         var fieldType = $('select[name ="Actions['+actionIndex+'].Type"] option:selected').val();
         var url = "";
@@ -189,9 +204,25 @@
             //alert(textStatus);
         });
     }
-    
-    function onActionsFieldChanged(source, actionIndex) {
-        refreshActionsField(actionIndex);
+
+    function displayActionsValue(actionIndex, value) {
+        var rowAccessor = "#rowActions_"+actionIndex;
+        var fieldType = $('select[name ="Actions['+actionIndex+'].Type"] option:selected').val();
+        var field = $('select[name ="Actions['+actionIndex+'].Field"] option:selected').val();
+        var url = "";
+
+        if(value == undefined) {
+            value = "";
+        }
+
+        if(fieldType == "1") {
+            url = '/rules/selecttagvalue?mode=Actions&field=Value&index=' + actionIndex + '&tagType='+field+'&value=' + value;
+        } else {
+            url = '/rules/selectfieldvalue?mode=Actions&field=Value&index=' + actionIndex + '&fieldName='+field+'&valueOperator=&value=' + value;
+        }
+        $(rowAccessor + ' .value').load(url, function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
     }
 
 </script>

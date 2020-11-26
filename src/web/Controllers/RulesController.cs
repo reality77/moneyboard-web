@@ -237,20 +237,25 @@ namespace web.Controllers
                 case nameof(ImportedTransaction.Date):
                 case nameof(ImportedTransaction.UserDate):
                 {
-                    switch(Enum.Parse<dto.ERecognitionRuleConditionOperator>(valueOperator))
+                    if(!string.IsNullOrWhiteSpace(valueOperator))
                     {
-                        case dto.ERecognitionRuleConditionOperator.DayEquals:
-                        case dto.ERecognitionRuleConditionOperator.WeekEquals:
-                        case dto.ERecognitionRuleConditionOperator.MonthEquals:
-                        case dto.ERecognitionRuleConditionOperator.YearEquals:
-                        case dto.ERecognitionRuleConditionOperator.DayOfWeekEquals:
-                        case dto.ERecognitionRuleConditionOperator.DayNear:
-                            fieldType = "number";
-                            break;
-                        default:
-                            fieldType = "date";
-                            break;
+                        switch(Enum.Parse<dto.ERecognitionRuleConditionOperator>(valueOperator))
+                        {
+                            case dto.ERecognitionRuleConditionOperator.DayEquals:
+                            case dto.ERecognitionRuleConditionOperator.WeekEquals:
+                            case dto.ERecognitionRuleConditionOperator.MonthEquals:
+                            case dto.ERecognitionRuleConditionOperator.YearEquals:
+                            case dto.ERecognitionRuleConditionOperator.DayOfWeekEquals:
+                            case dto.ERecognitionRuleConditionOperator.DayNear:
+                                fieldType = "number";
+                                break;
+                            default:
+                                fieldType = "date";
+                                break;
+                        }
                     }
+                    else
+                        fieldType = "date";
                 }
                     break;
                 default:
