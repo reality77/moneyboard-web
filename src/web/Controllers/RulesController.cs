@@ -97,6 +97,12 @@ namespace web.Controllers
             return View(rule); // pour debug
         }
 
+        [HttpGet("addconditionrow")]
+        public IActionResult AddConditionRow(int index)
+        {
+            return PartialView("_PartialRulesRowCondition", index);
+        }
+
         /// <summary>
         /// Génère un champ select pour proposer le choix d'un type de tag
         /// </summary>
@@ -152,7 +158,7 @@ namespace web.Controllers
         }
 
         /// <summary>
-        /// Génère un champ select pour proposer le choix d'un opérateur
+        /// Génère un champ select pour proposer le choix d'un opérateur de comparaison
         /// </summary>
         /// <param name="mode">Conditions ou Actions</param>
         /// <param name="index">Index de la condition ou de l'action</param>
@@ -166,7 +172,7 @@ namespace web.Controllers
             {
                 HtmlFieldId = $"{mode}_{index}_{field}",      // Exemple : Conditions_0_FieldType
                 HtmlFieldName = $"{mode}[{index}].{field}",   // Exemple : Conditions[0].FieldType
-                OnChangeScript = null, // $"on{mode}{field}Changed(this, {index});", // Exemple : onConditionFieldTypeChanged(this, 0);
+                OnChangeScript = $"on{mode}{field}Changed(this, {index});", // Exemple : onConditionFieldTypeChanged(this, 0);
                 ListItems = values.Select(n => new SelectListItem
                 {
                     Value = n,
@@ -176,6 +182,92 @@ namespace web.Controllers
             };
 
             return PartialView("_PartialSelectRules", model);
-        }        
+        }
+        
+
+        /// <summary>
+        /// Génère un champ select pour proposer le choix d'un tag
+        /// </summary>
+        /// <param name="mode">Conditions ou Actions</param>
+        /// <param name="index">Index de la condition ou de l'action</param>
+        /// <returns></returns>
+        [HttpGet("selecttagvalue")]
+        public async Task<IActionResult> PartialSelectTagValue(TargetMode mode, string field, int index, string tagType, string value = null)
+        {
+            var tags = (await _api.GetAsync<IEnumerable<Tag>>($"tags/{tagType}")).OrderBy(t => t.Key);
+
+            var model = new RulesSelectModel
+            {
+                HtmlFieldId = $"{mode}_{index}_{field}",      // Exemple : Conditions_0_FieldType
+                HtmlFieldName = $"{mode}[{index}].{field}",   // Exemple : Conditions[0].FieldType
+                OnChangeScript = null,
+                ListItems = tags.Select(t => new SelectListItem
+                {
+                    Value = t.Key,
+                    Text = t.Caption ?? t.Key,
+                    Selected = (t.Key == value),
+                }),
+            };
+
+            return PartialView("_PartialSelectRules", model);
+        }
+                
+        /// <summary>
+        /// Génère un champ select pour proposer la valeur d'un champ
+        /// </summary>
+        /// <param name="mode">Conditions ou Actions</param>
+        /// <param name="index">Index de la condition ou de l'action</param>
+        /// <returns></returns>
+        [HttpGet("selectfieldvalue")]
+        public IActionResult PartialSelectFieldValue(TargetMode mode, string field, int index, string fieldName, string valueOperator, string value = null)
+        {
+            Type type = typeof(ImportedTransaction);
+            var property = type.GetProperty(fieldName);
+
+            string fieldType;
+
+            switch(property.Name)
+            {
+                case nameof(ImportedTransaction.Amount):
+                    fieldType = "number";
+                    break;
+                case nameof(ImportedTransaction.ImportNumber):
+                    fieldType = "number";
+                    break;
+                case nameof(ImportedTransaction.Date):
+                case nameof(ImportedTransaction.UserDate):
+                {
+                    switch(Enum.Parse<dto.ERecognitionRuleConditionOperator>(valueOperator))
+                    {
+                        case dto.ERecognitionRuleConditionOperator.DayEquals:
+                        case dto.ERecognitionRuleConditionOperator.WeekEquals:
+                        case dto.ERecognitionRuleConditionOperator.MonthEquals:
+                        case dto.ERecognitionRuleConditionOperator.YearEquals:
+                        case dto.ERecognitionRuleConditionOperator.DayOfWeekEquals:
+                        case dto.ERecognitionRuleConditionOperator.DayNear:
+                            fieldType = "number";
+                            break;
+                        default:
+                            fieldType = "date";
+                            break;
+                    }
+                }
+                    break;
+                default:
+                    fieldType = "text";
+                    break;
+            }
+
+            var model = new RulesInputModel
+            {
+                HtmlFieldId = $"{mode}_{index}_{field}",      // Exemple : Conditions_0_FieldType
+                HtmlFieldName = $"{mode}[{index}].{field}",   // Exemple : Conditions[0].FieldType
+                OnChangeScript = null,
+                HtmlType = fieldType,
+                Value = value,
+            };
+
+            return PartialView("_PartialInputRules", model);
+        }
     }
 }

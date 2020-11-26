@@ -1,0 +1,29 @@
+@using web.Utils
+@model int
+
+@{
+    var rowId = $"rowConditions_{Model}";
+    var selectFieldTypeId = $"Conditions_{@Model}_FieldType";
+}
+
+<div class="table-row" id="@rowId">
+    <div class="table-cell">
+        @(Model + 1)
+    </div>
+    <div class="table-cell fieldtype">
+        <select id="@selectFieldTypeId" name="Conditions[@Model].FieldType" onchange="onConditionFieldTypeChanged(this, @Model);">
+            <option value="0">Data field</option>
+            <option value="1">Tag</option>
+        </select>
+    </div>
+    <div class="table-cell fieldname">
+        @* rafraichissement automatique *@
+    </div>
+    <div class="table-cell valueoperator">
+        @* automatique *@
+    </div>
+    <div class="table-cell value">
+        @* automatique *@
+        @*<input type="text" asp-for="Conditions.ElementAt(ic).Value" name="Conditions[@ic].Value" />*@
+    </div>
+</div>

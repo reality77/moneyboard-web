@@ -25,44 +25,26 @@
                     <div class="table-cell table-header">Actions</div>
                 </div>
 
-                <div class="table-row" data-conditions-count="Model.Conditions.Count()">
+                <div class="table-row">
                     <div class="table-cell">
-                        <div class="table100">
+                        <div class="table100 conditions" data-conditions-count="@Model.Conditions.Count()">
                         @for(int ic = 0; ic < Model.Conditions.Count(); ic++)
                         {
                             var condition = Model.Conditions.ElementAt(ic);
-                            var rowId = $"rowConditions_{ic}";
 
-                            <div class="table-row" id="@rowId">
-                                <div class="table-cell">
-                                    @(ic + 1)
-                                </div>
-                                <div class="table-cell fieldtype">
-                                    <select asp-for="Conditions.ElementAt(ic).FieldType" name="Conditions[@ic].FieldType" onchange="onConditionFieldTypeChanged(this, @ic);">
-                                        <option value="0">Data field</option>
-                                        <option value="1">Tag</option>
-                                    </select>
-                                </div>
-                                <div class="table-cell fieldname">
-                                   @* rafraichissement automatique *@
-                                </div>
-                                <div class="table-cell valueoperator">
-                                   @* automatique *@
-                                </div>
-                                <div class="table-cell value">
-                                    <input type="text" asp-for="Conditions.ElementAt(ic).Value" name="Conditions[@ic].Value" />
-                                </div>
-                            </div>
+                            <text>
+                            <partial name="_PartialRulesRowCondition" for="@ic"></partial>
+                            </text>
                         }
                             <div class="table-row">
                                 <div class="table-cell">
-                                    <button onclick="addCondition">Ajouter une condition</button>
+                                    <button onclick="addCondition(); return false;">Ajouter une condition</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="table-cell">
-                        <div class="table100">
+                        <div class="table100 actions">
                         @for(int ia = 0; ia < Model.Actions.Count(); ia++)
                         {
                             var condition = Model.Actions.ElementAt(ia);
@@ -106,7 +88,9 @@
         @for(int i = 0; i < Model.Conditions.Count(); i++)
         {
         <text>
-        refreshConditionsFieldType(@i, '@Model.Conditions.ElementAt(i).FieldName');
+        displayConditionsFieldName(@i, '@Model.Conditions.ElementAt(i).FieldName');
+        displayConditionsValueOperator(@i, '@Model.Conditions.ElementAt(i).ValueOperator');
+        displayConditionsValue(@i, '@Model.Conditions.ElementAt(i).Value');
         </text>
         }
 
@@ -118,11 +102,29 @@
         }
     });
 
-    function onConditionFieldTypeChanged(source, conditionIndex) {
-        refreshConditionsFieldType(conditionIndex);
+    function addCondition() {
+        var count = parseInt($(".table100.conditions").attr("data-conditions-count"));
+
+        $.get('/rules/addconditionrow?index=' + count, function(result) {
+            $(".table100.conditions").append(result);
+            $(".table100.conditions").attr("data-conditions-count", count + 1);
+        });
     }
 
-    function refreshConditionsFieldType(conditionIndex, value) {
+    function onConditionFieldTypeChanged(source, conditionIndex) {
+        displayConditionsFieldName(conditionIndex);
+    }
+
+    function onConditionsFieldNameChanged(source, conditionIndex) {
+        displayConditionsValueOperator(conditionIndex);
+        displayConditionsValue(conditionIndex);
+    }
+
+    function onConditionsValueOperatorChanged(source, conditionIndex) {
+        displayConditionsValue(conditionIndex);
+    }
+
+    function displayConditionsFieldName(conditionIndex, value) {
         var rowAccessor = "#rowConditions_"+conditionIndex;
         var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldType"] option:selected').val();
         var url = "";
@@ -138,18 +140,32 @@
         });
     }
 
-    function onConditionsFieldNameChanged(source, conditionIndex) {
-        refreshConditionsFieldName(conditionIndex);
-    }
 
-    function refreshConditionsFieldName(conditionIndex, value) {
+    function displayConditionsValueOperator(conditionIndex, value) {
         var rowAccessor = "#rowConditions_"+conditionIndex;
-        var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldName"] option:selected').val();
         var url = "";
 
         url = '/rules/selectvalueoperator?mode=Conditions&field=ValueOperator&index=' + conditionIndex + '&value=' + value;
 
         $(rowAccessor + ' .valueoperator').load(url, function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
+    }
+
+    function displayConditionsValue(conditionIndex, value) {
+        var rowAccessor = "#rowConditions_"+conditionIndex;
+        var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldType"] option:selected').val();
+        var fieldName = $('select[name ="Conditions['+conditionIndex+'].FieldName"] option:selected').val();
+        var valueOperator = $('select[name ="Conditions['+conditionIndex+'].ValueOperator"] option:selected').val();
+        var url = "";
+
+        if(fieldType == 1) {
+            url = '/rules/selecttagvalue?mode=Conditions&field=Value&index=' + conditionIndex + '&tagType='+fieldName+'&value=' + value;
+        } else {
+            url = '/rules/selectfieldvalue?mode=Conditions&field=Value&index=' + conditionIndex + '&fieldName='+fieldName+'&valueOperator=' + valueOperator + '&value=' + value;
+        }
+
+        $(rowAccessor + ' .value').load(url, function(responseText, textStatus, jqXHR ) {
             //alert(textStatus);
         });
     }

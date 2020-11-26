@@ -1,0 +1,4 @@
+@using web.Utils
+@model web.Models.Rules.RulesInputModel
+
+<input type="@Model.HtmlType" id="@Model.HtmlFieldId" name="@Model.HtmlFieldName" onchange="@Model.OnChangeScript" value="@(Model.Value ?? string.Empty)" />
