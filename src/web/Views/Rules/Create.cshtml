@@ -18,7 +18,7 @@
 
 <div class="row">
     <div class="col-12">
-        <form asp-action="PostCreate" method="POST">
+        <form id="formRule" asp-action="PostCreate" method="POST">
             <div class="table100">
                 <div class="table-row">
                     <div class="table-cell table-header">Conditions</div>
@@ -27,6 +27,14 @@
 
                 <div class="table-row">
                     <div class="table-cell">
+                        <div class="table-row">
+                            <div class="table-cell">
+                                <button onclick="addCondition(); return false;">Ajouter une condition</button>
+                            </div>
+                            <div class="table-cell">
+                                <button onclick="addAction(); return false;">Ajouter une action</button>
+                            </div>
+                        </div>
                         <div class="table100 conditions" data-conditions-count="@Model.Conditions.Count()">
                         @for(int ic = 0; ic < Model.Conditions.Count(); ic++)
                         {
@@ -36,44 +44,28 @@
                             <partial name="_PartialRulesRowCondition" for="@ic"></partial>
                             </text>
                         }
-                            <div class="table-row">
-                                <div class="table-cell">
-                                    <button onclick="addCondition(); return false;">Ajouter une condition</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="table-cell">
-                        <div class="table100 actions">
+                        <div class="table100 actions" data-actions-count="@Model.Actions.Count()">
                         @for(int ia = 0; ia < Model.Actions.Count(); ia++)
                         {
-                            var condition = Model.Actions.ElementAt(ia);
-                            var rowId = $"rowActions_{ia}";
-                            
-                            <div class="table-row" id="@rowId">
-                                <div class="table-cell">
-                                    @(ia + 1)
-                                </div>
-                                <div class="table-cell type">
-                                    <select asp-for="Actions.ElementAt(ia).Type" name="Actions[@ia].Type" onchange="onActionTypeChanged(this, @ia);">
-                                        <option value="0">Set data</option>
-                                        <option value="1">Add tag</option>
-                                    </select>
-                                </div>
-                                <div class="table-cell field">
-                                    @* rafraichissement automatique *@
-                                </div>
-                                <div class="table-cell value">
-                                    @* rafraichissement automatique *@
-                                </div>
-                            </div>
+                            var action = Model.Actions.ElementAt(ia);
+
+                            <text>
+                            <partial name="_PartialRulesRowAction" for="@ia"></partial>
+                            </text>
                         }
                         </div>
                     </div>                
                 </div>
             </div>
             <button type="submit">Créer</button>
+            <button type="button" onclick="onDetectTransactions(); return false;">Détecter</button>
         </form>
+    </div>
+    <div id="detectionPanel" class="col-12">
+
     </div>
 </div>
 
@@ -180,6 +172,15 @@
         });
     }
 
+    function addAction() {
+        var count = parseInt($(".table100.actions").attr("data-actions-count"));
+
+        $.get('/rules/addactionrow?index=' + count, function(result) {
+            $(".table100.actions").append(result);
+            $(".table100.actions").attr("data-actions-count", count + 1);
+        });
+    }
+
     function onActionTypeChanged(source, actionIndex) {
         displayActionsField(actionIndex);
         displayActionsValue(actionIndex);
@@ -222,6 +223,30 @@
         }
         $(rowAccessor + ' .value').load(url, function(responseText, textStatus, jqXHR ) {
             //alert(textStatus);
+        });
+    }
+
+    function onDetectTransactions() {
+
+        var url = "@Url.Action("DetectTransactions")";
+
+        // Get form
+        var form = $('#formRule')[0];
+ 
+        // Create an FormData object 
+        var data = new FormData(form);
+
+        $.ajax({
+            type: "POST",
+            url: url, 
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function(result) {
+                $("#detectionPanel").html(result);
+            }
         });
     }
 

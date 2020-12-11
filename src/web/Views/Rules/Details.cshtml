@@ -1,0 +1,59 @@
+@using dto.Model
+@using web.Utils
+
+@model dto.Model.TransactionRecognitionRule
+
+@{
+    ViewData["Title"] = $"Règles de reconnaissance";
+}
+
+@section Stylesheets
+{
+}
+
+<h2>Règle de reconnaissance de transactions</h2>
+
+<div>
+    <a asp-controller="Rules" asp-action="List">Retour</a>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h3>Détails</h3>
+        <div class="table-row">
+            <div class="table-cell">@Model.Id</div>
+            <div class="table-cell">
+                <div class="table100">
+                @foreach(var condition in Model.Conditions)
+                {
+                    <div class="table-row">
+                        <div class="table-cell">@condition.FieldType @condition.FieldName @condition.ValueOperator <strong>@condition.Value</strong></div>
+                    </div>
+                }
+                </div>
+            </div>
+            <div class="table-cell">
+                <div class="table100">
+                @foreach(var action in Model.Actions)
+                {
+                    <div class="table-row">
+                        <div class="table-cell">@action.Type @action.Field = <strong>@action.Value</strong></div>
+                    </div>
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <h3>Transactions susceptibles d'être impactées par cette règle</h3>
+        <div>
+            <a asp-controller="Rules" asp-action="RescanTransactionsFromRule" asp-route-id="@Model.Id">Rescan</a>
+        </div>
+        @await Html.PartialAsync("ImportedTransactions", (IEnumerable<ImportedTransaction>)ViewBag.DetectedTransactions);
+    </div>
+</div>
+
+
+@section Scripts
+{
+}

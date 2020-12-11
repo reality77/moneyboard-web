@@ -1,0 +1,47 @@
+@using web.Utils
+
+@model dto.Model.ImportedTransaction
+@* 
+    Paramètres ViewData facultatifs : 
+    - CurrencyString (default : empty)
+    - DisplayTransactionDate (default : true)
+*@
+
+@{
+    var currencyString = string.Empty;
+    var displayTransactionDate = true;
+
+    if(ViewData.ContainsKey("CurrencyString"))
+        currencyString = $" {ViewData["CurrencyString"]}";
+
+    if(ViewData.ContainsKey("DisplayTransactionDate"))
+        displayTransactionDate = (bool)ViewData["DisplayTransactionDate"];
+}
+
+<div class="table-row data-content">
+    @if(displayTransactionDate)
+    {
+    <div class="table-cell">@Model.Date.ToString("dd MMM")</div>
+    }
+    <div class="table-cell">
+        <div class="table-cell-transaction-caption">
+            <a asp-controller="Transactions" asp-action="Details" asp-route-id="@Model.Id">(+)</a>
+
+            @{ var payee = @Model.TransactionTags.SingleOrDefault(t => t.TagTypeKey == "payee"); }
+            <div class="caption">
+                <span alt="@payee?.TagKey"><a asp-controller="Payees" asp-action="Details" asp-route-key="@payee?.TagKey">@payee?.TagCaption</a> @(string.IsNullOrEmpty(Model.Caption) ? string.Empty : $"({Model.Caption})")</span>
+            </div>
+            <div class="taglist">
+                @foreach(var tag in Model.TransactionTags.Where(t => t.TagTypeKey != "payee"))
+                {
+                    <span alt="@tag.TagTypeKey : @tag.TagKey" class="tag"><a asp-controller="Tags" asp-action="Details" asp-route-tagType="@tag.TagTypeKey" asp-route-tagKey="@tag.TagKey">@(!string.IsNullOrWhiteSpace(tag.TagCaption) ? tag.TagCaption : tag.TagKey)</a></span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-cell"><span>@Model.Type</span></div>
+    <div class="table-cell"><span>@Model.Comment</span></div>
+    <div class="table-cell"><span>@Model.ImportCaption</span></div>
+    <div class="table-cell"><span>@Model.ImportComment</span></div>
+    <div class="table-cell"><span class="trx-amount @(Model.Amount > 0 ? "positive" : null)">@(Model.Amount.ToCurrencyString() + currencyString)</span></div>
+</div>

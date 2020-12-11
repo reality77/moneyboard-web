@@ -84,7 +84,7 @@ namespace web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> PostCreate(dto.Model.TransactionRecognitionRule rule)
+        public async Task<IActionResult> PostCreate(dto.Model.TransactionRecognitionRuleEdit rule)
         {
             _logger.LogWarning($"UseOrConditions : {rule.UseOrConditions}");
 
@@ -94,13 +94,47 @@ namespace web.Controllers
             foreach(var action in rule.Actions)
                 _logger.LogWarning($"Action {action.Type}/{action.Field} => {action.Value}");
 
-            return View(rule); // pour debug
+            await _api.PostAsync<dto.Model.TransactionRecognitionRule, dto.Model.TransactionRecognitionRuleEdit>($"recognition/rules", rule);
+
+            return RedirectToAction(nameof(List));
+        }
+
+        [HttpPost("detecttransactions")]
+        public async Task<IActionResult> DetectTransactions(dto.Model.TransactionRecognitionRule rule)
+        {
+            var transactions = await _api.PostAsync<IEnumerable<ImportedTransaction>, dto.Model.TransactionRecognitionRule>($"recognition/rules/detect", rule);
+
+            return PartialView("ImportedTransactions", transactions);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var rule = await _api.GetAsync<dto.Model.TransactionRecognitionRule>($"recognition/rules/{id}");
+
+            ViewBag.DetectedTransactions = await _api.GetAsync<IEnumerable<ImportedTransaction>>($"recognition/rules/{id}/detect");
+
+            return View(rule);
+        }
+
+        [HttpGet("{id}/rescan")]
+        public async Task<IActionResult> RescanTransactionsFromRule(int id)
+        {
+            await _api.PostAsync($"recognition/rules/{id}/scan");
+
+            return RedirectToAction(nameof(Details), new { id = id });
         }
 
         [HttpGet("addconditionrow")]
         public IActionResult AddConditionRow(int index)
         {
             return PartialView("_PartialRulesRowCondition", index);
+        }
+
+        [HttpGet("addactionrow")]
+        public IActionResult AddActionRow(int index)
+        {
+            return PartialView("_PartialRulesRowAction", index);
         }
 
         /// <summary>
