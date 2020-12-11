@@ -1,0 +1,8 @@
+@using web.Utils
+@model web.Models.Rules.RulesInputModel
+
+@if(Model.HtmlType != "number") {
+    <input type="@Model.HtmlType" id="@Model.HtmlFieldId" name="@Model.HtmlFieldName" onchange="@Model.OnChangeScript" value="@(Model.Value ?? string.Empty)" />
+} else {
+    <input type="@Model.HtmlType" step="any" id="@Model.HtmlFieldId" name="@Model.HtmlFieldName" onchange="@Model.OnChangeScript" value="@(Model.Value ?? string.Empty)" />
+}

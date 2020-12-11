@@ -1,0 +1,25 @@
+@using web.Utils
+@model int
+
+@{
+    var rowId = $"rowActions_{Model}";
+    var selectFieldTypeId = $"Actions_{@Model}_FieldType";                            
+}
+
+<div class="table-row" id="@rowId">
+    <div class="table-cell">
+       @(Model + 1)
+    </div>
+    <div class="table-cell type">
+        <select id="@selectFieldTypeId" name="Actions[@Model].Type" onchange="onActionTypeChanged(this, @Model);">
+            <option value="0">Set data</option>
+            <option value="1">Add tag</option>
+        </select>
+    </div>
+    <div class="table-cell field">
+        @* rafraichissement automatique *@
+    </div>
+    <div class="table-cell value">
+        @* rafraichissement automatique *@
+    </div>
+</div>

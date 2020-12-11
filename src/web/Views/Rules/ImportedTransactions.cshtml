@@ -1,0 +1,24 @@
+@using web.Utils
+@model IEnumerable<dto.Model.ImportedTransaction>
+
+<div class="row">
+    <div class="col-12">
+        <div class="table100">
+            <div class="table-row">
+                <div class="table-cell table-header">Date</div>
+                <div class="table-cell table-header">Libellé</div>
+                <div class="table-cell table-header">Type</div>
+                <div class="table-cell table-header">Commentaire</div>
+                <div class="table-cell table-header">Libellé d'import</div>
+                <div class="table-cell table-header">Commentaire d'import</div>
+                <div class="table-cell table-header">Montant</div>
+            </div>
+
+        @foreach(var transaction in Model)
+        {
+            @await Html.PartialAsync("_SingleImportedTransaction", transaction, new ViewDataDictionary(ViewData) { { "DisplayTransactionDate", true } });
+        }
+
+        </div>
+    </div>
+</div>

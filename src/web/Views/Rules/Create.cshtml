@@ -1,0 +1,254 @@
+@using web.Utils
+
+@model dto.Model.TransactionRecognitionRule
+
+@{
+    ViewData["Title"] = $"Créer une règle de reconnaissance";
+}
+
+@section Stylesheets
+{
+}
+
+<h2>Créer une règle de reconnaissance de transactions</h2>
+
+<div>
+    <a asp-controller="Rules" asp-action="List">Retour</a>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <form id="formRule" asp-action="PostCreate" method="POST">
+            <div class="table100">
+                <div class="table-row">
+                    <div class="table-cell table-header">Conditions</div>
+                    <div class="table-cell table-header">Actions</div>
+                </div>
+
+                <div class="table-row">
+                    <div class="table-cell">
+                        <div class="table-row">
+                            <div class="table-cell">
+                                <button onclick="addCondition(); return false;">Ajouter une condition</button>
+                            </div>
+                            <div class="table-cell">
+                                <button onclick="addAction(); return false;">Ajouter une action</button>
+                            </div>
+                        </div>
+                        <div class="table100 conditions" data-conditions-count="@Model.Conditions.Count()">
+                        @for(int ic = 0; ic < Model.Conditions.Count(); ic++)
+                        {
+                            var condition = Model.Conditions.ElementAt(ic);
+
+                            <text>
+                            <partial name="_PartialRulesRowCondition" for="@ic"></partial>
+                            </text>
+                        }
+                        </div>
+                    </div>
+                    <div class="table-cell">
+                        <div class="table100 actions" data-actions-count="@Model.Actions.Count()">
+                        @for(int ia = 0; ia < Model.Actions.Count(); ia++)
+                        {
+                            var action = Model.Actions.ElementAt(ia);
+
+                            <text>
+                            <partial name="_PartialRulesRowAction" for="@ia"></partial>
+                            </text>
+                        }
+                        </div>
+                    </div>                
+                </div>
+            </div>
+            <button type="submit">Créer</button>
+            <button type="button" onclick="onDetectTransactions(); return false;">Détecter</button>
+        </form>
+    </div>
+    <div id="detectionPanel" class="col-12">
+
+    </div>
+</div>
+
+
+@section Scripts
+{
+<script lang="javascript">
+
+    $(document).ready(function() {
+        @for(int i = 0; i < Model.Conditions.Count(); i++)
+        {
+        <text>
+        displayConditionsFieldName(@i, '@Model.Conditions.ElementAt(i).FieldName');
+        displayConditionsValueOperator(@i, '@Model.Conditions.ElementAt(i).ValueOperator');
+        displayConditionsValue(@i, '@Model.Conditions.ElementAt(i).Value');
+        </text>
+        }
+
+        @for(int i = 0; i < Model.Actions.Count(); i++)
+        {
+        <text>
+        refreshActionsType(@i, '@Model.Actions.ElementAt(i).Field');
+        </text>
+        }
+    });
+
+    function addCondition() {
+        var count = parseInt($(".table100.conditions").attr("data-conditions-count"));
+
+        $.get('/rules/addconditionrow?index=' + count, function(result) {
+            $(".table100.conditions").append(result);
+            $(".table100.conditions").attr("data-conditions-count", count + 1);
+        });
+    }
+
+    function onConditionFieldTypeChanged(source, conditionIndex) {
+        displayConditionsFieldName(conditionIndex);
+    }
+
+    function onConditionsFieldNameChanged(source, conditionIndex) {
+        displayConditionsValueOperator(conditionIndex);
+        displayConditionsValue(conditionIndex);
+    }
+
+    function onConditionsValueOperatorChanged(source, conditionIndex) {
+        displayConditionsValue(conditionIndex);
+    }
+
+    function displayConditionsFieldName(conditionIndex, value) {
+        var rowAccessor = "#rowConditions_"+conditionIndex;
+        var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldType"] option:selected').val();
+        var url = "";
+
+        if(value == undefined) {
+            value = "";
+        }
+
+        if(fieldType == "1") {
+            url = '/rules/selecttagtypes?mode=Conditions&field=FieldName&index=' + conditionIndex + '&value=' + value;
+        } else {
+            url = '/rules/selectfields?mode=Conditions&field=FieldName&index=' + conditionIndex + '&value=' + value;
+        }
+
+        $(rowAccessor + ' .fieldname').load(url, function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
+    }
+
+
+    function displayConditionsValueOperator(conditionIndex, value) {
+        var rowAccessor = "#rowConditions_"+conditionIndex;
+        var url = "";
+
+        if(value == undefined) {
+            value = "";
+        }
+
+        url = '/rules/selectvalueoperator?mode=Conditions&field=ValueOperator&index=' + conditionIndex + '&value=' + value;
+
+        $(rowAccessor + ' .valueoperator').load(url, function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
+    }
+
+    function displayConditionsValue(conditionIndex, value) {
+        var rowAccessor = "#rowConditions_"+conditionIndex;
+        var fieldType = $('select[name ="Conditions['+conditionIndex+'].FieldType"] option:selected').val();
+        var fieldName = $('select[name ="Conditions['+conditionIndex+'].FieldName"] option:selected').val();
+        var valueOperator = $('select[name ="Conditions['+conditionIndex+'].ValueOperator"] option:selected').val();
+        var url = "";
+
+        if(value == undefined) {
+            value = "";
+        }
+
+        if(fieldType == 1) {
+            url = '/rules/selecttagvalue?mode=Conditions&field=Value&index=' + conditionIndex + '&tagType='+fieldName+'&value=' + value;
+        } else {
+            url = '/rules/selectfieldvalue?mode=Conditions&field=Value&index=' + conditionIndex + '&fieldName='+fieldName+'&valueOperator=' + valueOperator + '&value=' + value;
+        }
+
+        $(rowAccessor + ' .value').load(url, function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
+    }
+
+    function addAction() {
+        var count = parseInt($(".table100.actions").attr("data-actions-count"));
+
+        $.get('/rules/addactionrow?index=' + count, function(result) {
+            $(".table100.actions").append(result);
+            $(".table100.actions").attr("data-actions-count", count + 1);
+        });
+    }
+
+    function onActionTypeChanged(source, actionIndex) {
+        displayActionsField(actionIndex);
+        displayActionsValue(actionIndex);
+    }
+    
+    function onActionsFieldChanged(source, actionIndex) {
+        displayActionsValue(actionIndex);
+    }
+
+    function displayActionsField(actionIndex, value) {
+        var rowAccessor = "#rowActions_"+actionIndex;
+        var fieldType = $('select[name ="Actions['+actionIndex+'].Type"] option:selected').val();
+        var url = "";
+
+        if(fieldType == "1") {
+            url = '/rules/selecttagtypes?mode=Actions&field=Field&index=' + actionIndex + '&value=' + value;
+        } else {
+            url = '/rules/selectfields?mode=Actions&field=Field&index=' + actionIndex + '&value=' + value;
+        }
+
+        $(rowAccessor + ' .field').load(url, function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
+    }
+
+    function displayActionsValue(actionIndex, value) {
+        var rowAccessor = "#rowActions_"+actionIndex;
+        var fieldType = $('select[name ="Actions['+actionIndex+'].Type"] option:selected').val();
+        var field = $('select[name ="Actions['+actionIndex+'].Field"] option:selected').val();
+        var url = "";
+
+        if(value == undefined) {
+            value = "";
+        }
+
+        if(fieldType == "1") {
+            url = '/rules/selecttagvalue?mode=Actions&field=Value&index=' + actionIndex + '&tagType='+field+'&value=' + value;
+        } else {
+            url = '/rules/selectfieldvalue?mode=Actions&field=Value&index=' + actionIndex + '&fieldName='+field+'&valueOperator=&value=' + value;
+        }
+        $(rowAccessor + ' .value').load(url, function(responseText, textStatus, jqXHR ) {
+            //alert(textStatus);
+        });
+    }
+
+    function onDetectTransactions() {
+
+        var url = "@Url.Action("DetectTransactions")";
+
+        // Get form
+        var form = $('#formRule')[0];
+ 
+        // Create an FormData object 
+        var data = new FormData(form);
+
+        $.ajax({
+            type: "POST",
+            url: url, 
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function(result) {
+                $("#detectionPanel").html(result);
+            }
+        });
+    }
+
+</script>
+}
