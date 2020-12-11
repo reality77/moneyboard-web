@@ -2,7 +2,7 @@
 
 @model TagModel
 @{
-    ViewData["Title"] = $"Tiers {Model.Details.Caption}";
+    ViewData["Title"] = $"Tag {Model.Details.Caption}";
 }
 
 @section Stylesheets
@@ -14,7 +14,22 @@
 <span class="little">@Model.Details.Key</span>
 
 <div class="row">
-    <a asp-controller="Tags" asp-action="Merge" asp-route-tagType="@Model.Details.TypeKey" asp-route-tagKey="@Model.Details.Key">Fusionner</a></div>
+    <a asp-controller="Tags" asp-action="Merge" asp-route-tagType="@Model.Details.TypeKey" asp-route-tagKey="@Model.Details.Key">Fusionner</a>
+
+    @if(!string.IsNullOrEmpty(Model.Details.ParentKey))
+    {
+        <span>&nbsp;|&nbsp;Parent :&nbsp;</span>
+        <a asp-controller="Tags" asp-action="Details" asp-route-tagType="@Model.Details.TypeKey" asp-route-tagKey="@Model.Details.ParentKey">@Model.Details.ParentKey</a>
+    }
+
+    @if(Model.Details.SubKeys.Count() > 0)
+    {
+        <span>&nbsp;|&nbsp;Enfants :&nbsp;</span>
+        foreach(string subKey in Model.Details.SubKeys)
+        {
+            <a asp-controller="Tags" asp-action="Details" asp-route-tagType="@Model.Details.TypeKey" asp-route-tagKey="@subKey">@subKey</a>@Html.Raw("&nbsp")
+        }
+    }
 </div>
 
 <div class="row">

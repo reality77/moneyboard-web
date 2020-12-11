@@ -36,7 +36,7 @@ namespace web.Controllers
 
         protected async Task<IActionResult> DetailsInternalAsync<T>(string tagType, string tag, string viewName = "TagDetails") where T : TagModel, new()
         {
-            var details = await _api.GetAsync<dto.Model.Tag>($"tags/{tagType.ToCleanQuery()}/{tag.ToCleanQuery()}");
+            var details = await _api.GetAsync<dto.Model.TagDetails>($"tags/{tagType.ToCleanQuery()}/{tag.ToCleanQuery()}");
             var transactions = await _api.GetAsync<IEnumerable<dto.Model.Transaction>>($"transactions/tag/{tagType.ToCleanQuery()}/{tag.ToCleanQuery()}");
 
             var request = new TagStatisticsRequest

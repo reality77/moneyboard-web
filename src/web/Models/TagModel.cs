@@ -6,7 +6,7 @@ namespace web.Models
 {
     public class TagModel
     {
-        public Tag Details { get; set; }
+        public TagDetails Details { get; set; }
         public IEnumerable<Transaction> Transactions { get; set; }
         public IEnumerable<TagStatisticsModel> Statistics { get; set; }
     }
