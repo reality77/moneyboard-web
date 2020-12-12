@@ -8,6 +8,6 @@ namespace web.Models
     {
         public TagDetails Details { get; set; }
         public IEnumerable<Transaction> Transactions { get; set; }
-        public IEnumerable<TagStatisticsModel> Statistics { get; set; }
+        public ChartModel Chart { get; set; }
     }
 }

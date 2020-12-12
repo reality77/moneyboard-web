@@ -44,6 +44,7 @@ namespace web.Controllers
                 Range = EDateRange.Months,
                 DateStart = new DateTime(DateTime.Today.Year - 1, DateTime.Today.Month, 1).AddMonths(1),
                 DateEnd = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddMilliseconds(-1),
+                IncludeSubTags = true,
             };
 
             var stats = await _api.PostAsync<IEnumerable<dto.Model.TagStatisticsModel>>($"tags/{tagType.ToCleanQuery()}/{tag.ToCleanQuery()}/statistics", System.Text.Json.JsonSerializer.Serialize(request), "application/json");
@@ -52,21 +53,53 @@ namespace web.Controllers
 
             var statsWithEmptyMonthsFilled = new List<dto.Model.TagStatisticsModel>();
 
+            // --- Initialisation des données du tableau
+            var chart = new ChartModel();
+            var dicSeries = new Dictionary<string, ChartSerieModel>();
+
+            var serie = new ChartSerieModel { Id = "total", Label = "Total", Type = "line" };
+            dicSeries.Add(serie.Id, serie);
+            chart.Series.Add(serie);
+
+            serie = new ChartSerieModel { Id = "average", Label = "Moyenne", Type = "line" };
+            dicSeries.Add(serie.Id, serie);
+            chart.Series.Add(serie);
+
+            serie = new ChartSerieModel { Id = $"tag:{details.Key}", Label = details.Caption ?? details.Key, Group = "main" };
+            dicSeries.Add(serie.Id, serie);
+            chart.Series.Add(serie);
+
+            var first = stats.FirstOrDefault();
+            if(first != null)
+            {
+                foreach(var subTagTotal in first.SubTagTotals)
+                {
+                    serie = new ChartSerieModel { Id = $"tag:{subTagTotal.Tag.Key}", Label = subTagTotal.Tag.Caption ?? subTagTotal.Tag.Key, Group = "main" };
+                    dicSeries.Add(serie.Id, serie);
+                    chart.Series.Add(serie);
+                }
+            }
+            
+            // --- Initialisation des données du tableau
             for(var date = request.DateStart.Value; date <= request.DateEnd.Value; date = date.AddMonths(1))
             {
+                chart.Labels.Add(date.ToString("MMM yy"));
+                
                 if(dicStats.TryGetValue((date.Year, date.Month), out TagStatisticsModel stat))
                 {
-                    statsWithEmptyMonthsFilled.Add(stat);
+                    dicSeries["total"].Values.Add(stat.Total);
+                    dicSeries["average"].Values.Add(0m); // TODO
+                    dicSeries[$"tag:{details.Key}"].Values.Add(stat.TagTotal);
+
+                    foreach(var subTagTotal in stat.SubTagTotals)
+                    {
+                        dicSeries[$"tag:{subTagTotal.Tag.Key}"].Values.Add(subTagTotal.Amount);
+                    }
                 }
                 else
                 {
-                    statsWithEmptyMonthsFilled.Add(new TagStatisticsModel 
-                    { 
-                        Year = date.Year, 
-                        Month = date.Month, 
-                        Day = null, 
-                        Total = 0 }
-                    );
+                    foreach(var mainSerie in chart.Series)
+                        dicSeries[mainSerie.Id].Values.Add(0m);
                 }    
             }
 
@@ -74,7 +107,7 @@ namespace web.Controllers
             {
                 Details = details,
                 Transactions = transactions.OrderByDescending(t => t.UserDate).ThenByDescending(t => t.Date),
-                Statistics = statsWithEmptyMonthsFilled,
+                Chart = chart,
             };
 
             return View(viewName, model);
