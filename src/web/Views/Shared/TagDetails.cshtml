@@ -78,6 +78,7 @@
                     data: [
                         @Html.Raw(serie.Values.Select(v => v.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)).Aggregate((a, b) => a + ", " + b))
                     ],
+                    stack: "main",
                     //backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     //borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1
