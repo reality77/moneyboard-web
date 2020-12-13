@@ -65,16 +65,18 @@ namespace web.Controllers
             dicSeries.Add(serie.Id, serie);
             chart.Series.Add(serie);
 
-            serie = new ChartSerieModel { Id = $"tag:{details.Key}", Label = details.Caption ?? details.Key, Group = "main" };
+            serie = new ChartSerieModel { Id = $"tag:{details.Key}", Label = details.Caption ?? details.Key, Group = "main", BackgroundColor = ChartModel.DefaultColors[0] };
             dicSeries.Add(serie.Id, serie);
             chart.Series.Add(serie);
 
             var first = stats.FirstOrDefault();
             if(first != null)
             {
+                int colorId = 1;
+
                 foreach(var subTagTotal in first.SubTagTotals)
                 {
-                    serie = new ChartSerieModel { Id = $"tag:{subTagTotal.Tag.Key}", Label = subTagTotal.Tag.Caption ?? subTagTotal.Tag.Key, Group = "main" };
+                    serie = new ChartSerieModel { Id = $"tag:{subTagTotal.Tag.Key}", Label = subTagTotal.Tag.Caption ?? subTagTotal.Tag.Key, Group = "main", BackgroundColor = ChartModel.DefaultColors[colorId++] };
                     dicSeries.Add(serie.Id, serie);
                     chart.Series.Add(serie);
                 }
