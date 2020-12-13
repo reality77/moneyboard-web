@@ -140,7 +140,12 @@ namespace web.Controllers
                 else
                 {
                     foreach(var mainSerie in chart.Series)
-                        dicSeries[mainSerie.Id].Values.Add(0m);
+                    {
+                        if(mainSerie.Id != "average")
+                            dicSeries[mainSerie.Id].Values.Add(0m);
+                        else
+                            dicSeries[mainSerie.Id].Values.Add(average);
+                    }
                 }    
             }
 
