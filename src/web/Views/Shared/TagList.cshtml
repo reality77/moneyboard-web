@@ -14,7 +14,7 @@
 <span class="little">@Model.TagType</span>
 
 <div class="row">
-    <div class="col-12">
+    <div class="col-12 col-md-4">
         <div class="table100">
             <div class="table-row">
                 <div class="table-cell table-header">Tiers</div>
@@ -29,9 +29,39 @@
         }
         </div>
     </div>
+        <div class="col-12 col-md-8">
+        <h3>Statistiques</h3>
+        <canvas id="chartStatistics" width="400" height="400"></canvas>
+    </div>
 </div>
 
 
 @section Scripts
 {
+    <script src="~/lib/chart.js/dist/Chart.min.js" ></script>
+
+    <script>
+    var ctx = document.getElementById('chartStatistics').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+
+            labels: [ 
+                @Html.Raw(Model.Chart.Labels.Select(v => $"'{v.ToString().Replace("'", "\\'")}'").Aggregate((a, b) => a + ", " + b))
+            ],
+            datasets: [
+            {
+                label: 'Tags',
+                data: [
+                    @Html.Raw(Model.Chart.Series.Select(s => s.Values.Single().ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)).Aggregate((a, b) => a + ", " + b))
+                ],
+                backgroundColor: [
+                    @Html.Raw(Model.Chart.Series.Select(s => $"'#{s.BackgroundColor}'").Aggregate((a, b) => a + ", " + b))
+                ],
+                //borderColor: 'rgba(255, 99, 132, 1)',
+                hoverOffset: 4
+            }]
+        },
+    });
+    </script>    
 }
