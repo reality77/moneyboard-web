@@ -23,6 +23,6 @@ namespace web.Utils
         /// </summary>
         public static string ToCleanQuery(this string value) => HttpUtility.UrlEncode(value);
 
-        public static DateTime ToDate(this dto.Model.TagStatisticsModel model) => new DateTime(model.Year, model.Month ?? 1, model.Day ?? 1);
+        public static DateTime ToDate(this dto.Model.TagStatisticsModel model) => new DateTime(model.Year ?? DateTime.Now.Year, model.Month ?? 1, model.Day ?? 1);
     }
 }

@@ -8,5 +8,6 @@ namespace web.Models
     {
         public string TagType { get; set; }
         public IEnumerable<Tag> Tags { get; set; }
+        public ChartModel Chart { get; set; }
     }
 }
